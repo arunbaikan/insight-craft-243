@@ -7,4 +7,4 @@
 - [x] Phase 7 — widget renderer registry (12 types)
 - [x] Phase 8 — dashboard builder (drag/resize grid, binding, save, share)
 - [x] Formula editor with inline validation and live preview values
-- [ ] Dashboard viewer: open a saved dashboard, apply period + global filters, charts update live
+- [x] Dashboard viewer: open a saved dashboard, apply period + global filters, charts update live
