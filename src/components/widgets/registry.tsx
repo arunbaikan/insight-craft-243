@@ -169,7 +169,7 @@ function StatCardSparkline({ widget, payload }: WidgetProps) {
         <div className="mt-2 min-h-0 flex-1">
           <ResponsiveContainer width="100%" height="100%">
             {type === "line" ? (
-              <LineChart data={data} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
+              <LineChart data={data} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
                 <XAxis dataKey="label" {...axisProps} />
                 <YAxis {...axisProps} width={56} tickFormatter={(v: number) => formatValue(v, r?.value_type ?? "number", 0, null, true)} />
                 <ChartTooltip results={results} />
@@ -178,7 +178,7 @@ function StatCardSparkline({ widget, payload }: WidgetProps) {
                 ))}
               </LineChart>
             ) : (
-              <BarChart data={data} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
+              <BarChart data={data} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
                 <XAxis dataKey="label" {...axisProps} />
                 <YAxis {...axisProps} width={56} tickFormatter={(v: number) => formatValue(v, r?.value_type ?? "number", 0, null, true)} />
                 <ChartTooltip results={results} />
