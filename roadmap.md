@@ -1,0 +1,10 @@
+# Roadmap
+
+- [x] Phase 1 — canonical schema + demo seed data
+- [x] Phase 4 — metric engine (filter DSL, formula AST, periods)
+- [x] Phase 5 — metric builder UI
+- [x] Phase 6 — batch dashboard data API with per-widget isolation
+- [x] Phase 7 — widget renderer registry (12 types)
+- [x] Phase 8 — dashboard builder (drag/resize grid, binding, save, share)
+- [x] Formula editor with inline validation and live preview values
+- [ ] Dashboard viewer: open a saved dashboard, apply period + global filters, charts update live
