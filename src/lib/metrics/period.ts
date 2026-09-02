@@ -66,12 +66,16 @@ export function resolvePeriod(key: string, today = new Date()): ResolvedPeriod {
     case "last_6m":
     case "last_12m":
     case "last_24m": {
+      // Rolling windows end at the last complete month so a part-month never
+      // reads as a collapse in a trend chart.
       count = Number(key.replace("last_", "").replace("m", ""));
-      const s = addMonths(y, m, -(count - 1));
+      const end = addMonths(y, m, -1);
+      const s = addMonths(end.y, end.m, -(count - 1));
       startY = s.y;
       startM = s.m;
       break;
     }
+
     default: {
       count = 6;
       const s = addMonths(y, m, -5);
