@@ -140,20 +140,6 @@ export function MetricBuilder({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(def), period]);
 
-  const applyFormula = (text: string) => {
-    setFormulaText(text);
-    if (!text.trim()) {
-      setFormulaError(null);
-      patch({ formula: null });
-      return;
-    }
-    try {
-      patch({ formula: parseFormula(text) });
-      setFormulaError(null);
-    } catch (e) {
-      setFormulaError(e instanceof Error ? e.message : "Invalid expression.");
-    }
-  };
 
   const conditions = (def.filters?.conditions ?? []) as FilterCondition[];
   const setConditions = (next: FilterCondition[]) =>
