@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import { Loader2, Plus, Sparkles, Trash2, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -77,13 +78,18 @@ export const EMPTY_METRIC: MetricDefinition = {
 export function MetricBuilder({
   catalogue,
   initial,
+  usedBy = [],
   onSaved,
   onCancel,
+  onDelete,
 }: {
   catalogue: MetricCatalogue;
   initial: MetricDefinition;
+  /** Dashboards whose widgets bind this metric — shown so edits are informed. */
+  usedBy?: { name: string; slug: string }[];
   onSaved: (m: MetricDefinition) => void;
   onCancel: () => void;
+  onDelete?: () => void;
 }) {
   const [def, setDef] = useState<MetricDefinition>(initial);
   const [formulaText, setFormulaText] = useState(formulaToText(initial.formula));
@@ -354,35 +360,78 @@ export function MetricBuilder({
               })}
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div>
-                <Label>Break down by</Label>
-                <Select value={def.group_by ?? "__none"} onValueChange={(v) => patch({ group_by: v === "__none" ? null : v })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="__none">No breakdown</SelectItem>
-                    {(entity?.fields ?? []).filter((f) => f.dimension).map((f) => (
-                      <SelectItem key={f.name} value={f.name}>{f.label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>Sign</Label>
-                <Select value={def.sign_convention} onValueChange={(v) => patch({ sign_convention: v as "natural" | "invert" })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="natural">Natural</SelectItem>
-                    <SelectItem value="invert">Invert (show as positive)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            <div>
+              <Label>Break down by</Label>
+              <Select value={def.group_by ?? "__none"} onValueChange={(v) => patch({ group_by: v === "__none" ? null : v })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__none">No breakdown</SelectItem>
+                  {(entity?.fields ?? []).filter((f) => f.dimension).map((f) => (
+                    <SelectItem key={f.name} value={f.name}>{f.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="mt-1 text-[11px] text-muted-foreground">
+                Powers donut and horizontal-bar widgets bound to this metric.
+              </p>
             </div>
           </section>
         )}
 
         <section className="space-y-4 rounded-xl border border-border bg-card p-4">
-          <h2 className="font-display text-sm font-semibold">3. Presentation and targets</h2>
+          <h2 className="font-display text-sm font-semibold">3. Shaping</h2>
+          <p className="text-xs text-muted-foreground">
+            How the raw number is turned into the figure people read.
+          </p>
+          <div className="grid gap-3 sm:grid-cols-4">
+            <div>
+              <Label>Time grain</Label>
+              <Select
+                value={def.time_grain}
+                onValueChange={(v) => patch({ time_grain: v as MetricDefinition["time_grain"] })}
+              >
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {["month", "quarter", "year"].map((g) => (
+                    <SelectItem key={g} value={g}>{g}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Sign</Label>
+              <Select value={def.sign_convention} onValueChange={(v) => patch({ sign_convention: v as "natural" | "invert" })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="natural">Natural</SelectItem>
+                  <SelectItem value="invert">Invert (show as positive)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="m-scale">Scale ×</Label>
+              <Input
+                id="m-scale"
+                type="number"
+                step="any"
+                value={def.scale}
+                onChange={(e) => patch({ scale: e.target.value === "" ? 1 : Number(e.target.value) })}
+              />
+            </div>
+            <div>
+              <Label htmlFor="m-unit">Unit suffix</Label>
+              <Input
+                id="m-unit"
+                placeholder="e.g. FTE"
+                value={def.unit ?? ""}
+                onChange={(e) => patch({ unit: e.target.value || null })}
+              />
+            </div>
+          </div>
+        </section>
+
+        <section className="space-y-4 rounded-xl border border-border bg-card p-4">
+          <h2 className="font-display text-sm font-semibold">4. Presentation and targets</h2>
           <div className="grid gap-3 sm:grid-cols-4">
             <div>
               <Label>Format</Label>
@@ -538,12 +587,39 @@ export function MetricBuilder({
           )}
         </div>
 
+        <div className="rounded-xl border border-border bg-card p-4">
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Used by</h3>
+          {usedBy.length === 0 ? (
+            <p className="mt-2 text-xs text-muted-foreground">
+              {def.id ? "No dashboard widget binds this metric yet." : "Save the metric to bind it to a widget."}
+            </p>
+          ) : (
+            <ul className="mt-2 space-y-1 text-xs">
+              {usedBy.map((d) => (
+                <li key={d.slug}>
+                  <Link to="/dashboards/$slug" params={{ slug: d.slug }} className="text-brand hover:underline">
+                    {d.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+          {def.id ? (
+            <p className="mt-2 text-[11px] text-muted-foreground">Version {def.version} — saving creates version {def.version + 1}.</p>
+          ) : null}
+        </div>
+
         <div className="flex gap-2">
           <Button className="flex-1" disabled={blocking || save.isPending} onClick={() => save.mutate(def)}>
             {save.isPending ? <Loader2 className="size-4 animate-spin" /> : null} Save metric
           </Button>
           <Button variant="outline" onClick={onCancel}>Cancel</Button>
         </div>
+        {onDelete && def.id ? (
+          <Button variant="ghost" className="w-full text-destructive hover:text-destructive" onClick={onDelete}>
+            <Trash2 className="size-4" /> Delete metric
+          </Button>
+        ) : null}
       </aside>
     </div>
   );

@@ -31,6 +31,26 @@ export const getMetricCatalogue = createServerFn({ method: "GET" }).handler(
   },
 );
 
+/** Dashboards whose widgets bind a given metric key, for the builder's impact panel. */
+export const getMetricUsage = createServerFn({ method: "POST" })
+  .inputValidator((input: { key: string }) => input)
+  .handler(async ({ data }): Promise<{ name: string; slug: string }[]> => {
+    const { getServerSupabase } = await import("@/lib/supabase-data.server");
+    const supabase = getServerSupabase();
+    const [{ data: widgets }, { data: dashboards }] = await Promise.all([
+      supabase.from("widgets").select("dashboard_id, metric_binding"),
+      supabase.from("dashboards").select("id, name, slug"),
+    ]);
+    const byId = new Map((dashboards ?? []).map((d) => [d.id, d]));
+    const hits = new Map<string, { name: string; slug: string }>();
+    for (const w of widgets ?? []) {
+      if (!JSON.stringify(w.metric_binding ?? {}).includes(`"${data.key}"`)) continue;
+      const d = byId.get(w.dashboard_id);
+      if (d) hits.set(d.slug, { name: d.name, slug: d.slug });
+    }
+    return [...hits.values()].sort((a, b) => a.name.localeCompare(b.name));
+  });
+
 export const validateMetric = createServerFn({ method: "POST" })
   .inputValidator((input: { definition: MetricDefinition }) => input)
   .handler(async ({ data }): Promise<{ issues: ValidationIssue[] }> => {
