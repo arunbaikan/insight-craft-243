@@ -2,7 +2,14 @@ import { useEffect, useMemo, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Loader2, Plus, Sparkles, Trash2, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
-import { previewMetric, saveMetric, validateMetric, type MetricCatalogue } from "@/lib/metrics.functions";
+import {
+  previewMetric,
+  saveMetric,
+  validateMetric,
+  type FormulaRefValue,
+  type MetricCatalogue,
+} from "@/lib/metrics.functions";
+import { FormulaEditor } from "@/components/metrics/formula-editor";
 import type {
   FilterCondition,
   FilterOperator,
