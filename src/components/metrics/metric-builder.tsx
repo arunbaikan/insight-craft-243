@@ -102,6 +102,8 @@ export function MetricBuilder({
   const [preview, setPreview] = useState<MetricResult | null>(null);
   const [previewError, setPreviewError] = useState<string | null>(null);
   const [refs, setRefs] = useState<FormulaRefValue[]>([]);
+  const [note, setNote] = useState("");
+
 
   useEffect(() => {
     setDef(initial);
