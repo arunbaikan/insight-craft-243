@@ -2,7 +2,14 @@ import { useEffect, useMemo, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Loader2, Plus, Sparkles, Trash2, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
-import { previewMetric, saveMetric, validateMetric, type MetricCatalogue } from "@/lib/metrics.functions";
+import {
+  previewMetric,
+  saveMetric,
+  validateMetric,
+  type FormulaRefValue,
+  type MetricCatalogue,
+} from "@/lib/metrics.functions";
+import { FormulaEditor } from "@/components/metrics/formula-editor";
 import type {
   FilterCondition,
   FilterOperator,
@@ -85,6 +92,7 @@ export function MetricBuilder({
   const [issues, setIssues] = useState<ValidationIssue[]>([]);
   const [preview, setPreview] = useState<MetricResult | null>(null);
   const [previewError, setPreviewError] = useState<string | null>(null);
+  const [refs, setRefs] = useState<FormulaRefValue[]>([]);
 
   useEffect(() => {
     setDef(initial);
@@ -108,6 +116,7 @@ export function MetricBuilder({
     onSuccess: (r) => {
       setPreview(r.result ?? null);
       setPreviewError(r.error ?? null);
+      setRefs(r.refs ?? []);
     },
     onError: (e: Error) => setPreviewError(e.message),
   });
@@ -131,20 +140,6 @@ export function MetricBuilder({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(def), period]);
 
-  const applyFormula = (text: string) => {
-    setFormulaText(text);
-    if (!text.trim()) {
-      setFormulaError(null);
-      patch({ formula: null });
-      return;
-    }
-    try {
-      patch({ formula: parseFormula(text) });
-      setFormulaError(null);
-    } catch (e) {
-      setFormulaError(e instanceof Error ? e.message : "Invalid expression.");
-    }
-  };
 
   const conditions = (def.filters?.conditions ?? []) as FilterCondition[];
   const setConditions = (next: FilterCondition[]) =>
@@ -210,37 +205,22 @@ export function MetricBuilder({
 
         {isExpression ? (
           <section className="space-y-3 rounded-xl border border-border bg-card p-4">
-            <h2 className="font-display text-sm font-semibold">2. Expression</h2>
+            <h2 className="font-display text-sm font-semibold">2. Formula</h2>
             <p className="text-xs text-muted-foreground">
-              Reference other metrics by key. Allowed helpers: safe_divide, percent_change, abs, min, max, coalesce, round.
+              Reference other metrics by key. Errors are flagged as you type and the preview on the right updates live.
             </p>
-            <Textarea
-              rows={3}
-              className="font-mono text-xs"
+            <FormulaEditor
               value={formulaText}
-              placeholder="safe_divide(salary_expense, total_revenue) * 100"
-              onChange={(e) => applyFormula(e.target.value)}
+              onChange={(text, node, error) => {
+                setFormulaText(text);
+                setFormulaError(error);
+                if (!error) patch({ formula: node });
+              }}
+              metrics={catalogue.metrics}
+              selfKey={def.key}
+              refValues={refs}
+              serverIssues={issues.filter((i) => i.path === "formula").map((i) => i.message)}
             />
-            {formulaError ? <p className="text-xs text-negative">{formulaError}</p> : null}
-            {issues
-              .filter((i) => i.path === "formula")
-              .map((i) => (
-                <p key={i.message} className="text-xs text-negative">
-                  {i.message}
-                </p>
-              ))}
-            <div className="flex flex-wrap gap-1">
-              {catalogue.metrics.slice(0, 40).map((m) => (
-                <button
-                  key={m.key}
-                  type="button"
-                  onClick={() => applyFormula(`${formulaText}${formulaText ? " " : ""}${m.key}`)}
-                  className="rounded-full border border-border px-2 py-0.5 text-[11px] text-muted-foreground hover:bg-accent"
-                >
-                  {m.key}
-                </button>
-              ))}
-            </div>
           </section>
         ) : (
           <section className="space-y-4 rounded-xl border border-border bg-card p-4">

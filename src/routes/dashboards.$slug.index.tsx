@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Pencil, RefreshCw } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
@@ -41,6 +41,9 @@ function DashboardView() {
     queryKey: ["dashboard-data", bundle.dashboard.id, period, filters],
     queryFn: () =>
       getDashboardData({ data: { dashboardId: bundle.dashboard.id, period, filters } }),
+    // Keep the previous numbers on screen while a new period resolves so the
+    // whole board does not flash back to skeletons.
+    placeholderData: keepPreviousData,
   });
 
   const byId: Record<string, WidgetPayload> = Object.fromEntries(

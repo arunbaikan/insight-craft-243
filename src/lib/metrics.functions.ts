@@ -63,14 +63,53 @@ export const validateMetric = createServerFn({ method: "POST" })
     return { issues };
   });
 
+export type FormulaRefValue = {
+  key: string;
+  name: string;
+  value: number | null;
+  value_type: MetricResult["value_type"];
+  decimals: number;
+  unit?: string | null | undefined;
+  error?: string;
+};
+
 export const previewMetric = createServerFn({ method: "POST" })
   .inputValidator((input: { definition: MetricDefinition; period: string }) => input)
-  .handler(async ({ data }): Promise<{ result?: MetricResult; error?: string }> => {
+  .handler(async ({ data }): Promise<{ result?: MetricResult; error?: string; refs?: FormulaRefValue[] }> => {
     const { createEngine } = await import("@/lib/metrics/engine.server");
+    const { collectMetricRefs } = await import("@/lib/metrics/formula");
     try {
       const engine = await createEngine(data.period || "last_6m");
+
+      // Resolve each referenced metric so the editor can show the inputs that
+      // feed the expression, not just the final number.
+      const refs: FormulaRefValue[] = [];
+      for (const key of collectMetricRefs(data.definition.formula)) {
+        if (key === data.definition.key) continue;
+        try {
+          const r = await engine.result(key);
+          refs.push({
+            key,
+            name: r.name,
+            value: r.value,
+            value_type: r.value_type,
+            decimals: r.decimals,
+            unit: r.unit ?? null,
+          });
+        } catch (e) {
+          refs.push({
+            key,
+            name: key,
+            value: null,
+            value_type: "number",
+            decimals: 0,
+            error: e instanceof Error ? e.message : "Could not resolve.",
+          });
+        }
+      }
+
       const result = await engine.resolveDraft(data.definition);
-      return { result };
+      return { result, refs };
     } catch (e) {
       return { error: e instanceof Error ? e.message : "Preview failed." };
     }
