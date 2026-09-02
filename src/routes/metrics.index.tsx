@@ -1,14 +1,14 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { Copy, Lock, Plus, Search } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
-import { EMPTY_METRIC, MetricBuilder } from "@/components/metrics/metric-builder";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { getMetricCatalogue } from "@/lib/metrics.functions";
-import type { MetricDefinition } from "@/lib/metrics/types";
+
+const KIND_FILTERS = ["all", "aggregate", "balance", "ratio", "formula", "ageing"] as const;
 
 export const Route = createFileRoute("/metrics/")({
   head: () => ({
@@ -27,53 +27,58 @@ export const Route = createFileRoute("/metrics/")({
 });
 
 function MetricsPage() {
+  const navigate = useNavigate();
   const catalogue = useQuery({ queryKey: ["metric-catalogue"], queryFn: () => getMetricCatalogue() });
-  const [editing, setEditing] = useState<MetricDefinition | null>(null);
   const [q, setQ] = useState("");
+  const [kind, setKind] = useState<(typeof KIND_FILTERS)[number]>("all");
 
   const metrics = catalogue.data?.metrics ?? [];
   const filtered = useMemo(
-    () => metrics.filter((m) => `${m.name} ${m.key} ${m.description ?? ""}`.toLowerCase().includes(q.toLowerCase())),
-    [metrics, q],
+    () =>
+      metrics.filter(
+        (m) =>
+          (kind === "all" || m.metric_kind === kind) &&
+          `${m.name} ${m.key} ${m.description ?? ""}`.toLowerCase().includes(q.toLowerCase()),
+      ),
+    [metrics, q, kind],
   );
-
-  if (editing && catalogue.data) {
-    return (
-      <AppShell
-        title={editing.id ? `Edit ${editing.name}` : "New metric"}
-        description="Every change is validated and previewed against live data before you save."
-      >
-        <MetricBuilder
-          catalogue={catalogue.data}
-          initial={editing}
-          onCancel={() => setEditing(null)}
-          onSaved={async () => {
-            setEditing(null);
-            await catalogue.refetch();
-          }}
-        />
-      </AppShell>
-    );
-  }
 
   return (
     <AppShell
       title="Metric library"
       description="System metrics are read-only; clone one to make it yours, or start from scratch."
       actions={
-        <Button onClick={() => setEditing({ ...EMPTY_METRIC })}>
-          <Plus className="size-4" /> New metric
+        <Button asChild>
+          <Link to="/metrics/new">
+            <Plus className="size-4" /> New metric
+          </Link>
         </Button>
       }
     >
-      <div className="mb-4 flex max-w-sm items-center gap-2 rounded-lg border border-border bg-card px-3">
-        <Search className="size-4 text-muted-foreground" />
-        <Input
-          className="border-0 px-0 shadow-none focus-visible:ring-0"
-          placeholder="Search metrics"
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-        />
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        <div className="flex max-w-sm flex-1 items-center gap-2 rounded-lg border border-border bg-card px-3">
+          <Search className="size-4 text-muted-foreground" />
+          <Input
+            className="border-0 px-0 shadow-none focus-visible:ring-0"
+            placeholder="Search metrics"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+          />
+        </div>
+        <div className="flex flex-wrap gap-1">
+          {KIND_FILTERS.map((k) => (
+            <button
+              key={k}
+              type="button"
+              onClick={() => setKind(k)}
+              className={`rounded-full border px-3 py-1 text-xs capitalize transition-colors ${
+                kind === k ? "border-brand bg-brand-soft text-brand" : "border-border text-muted-foreground hover:bg-accent"
+              }`}
+            >
+              {k}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
@@ -96,11 +101,9 @@ function MetricsPage() {
                 variant={m.is_system ? "outline" : "secondary"}
                 className="ml-auto"
                 onClick={() =>
-                  setEditing(
-                    m.is_system
-                      ? { ...m, id: undefined, key: `${m.key}_copy`, name: `${m.name} (copy)`, is_system: false, version: 1 }
-                      : { ...m },
-                  )
+                  m.is_system
+                    ? navigate({ to: "/metrics/new", search: { clone: m.key } })
+                    : navigate({ to: "/metrics/$key", params: { key: m.key } })
                 }
               >
                 {m.is_system ? <><Copy className="size-3.5" /> Clone</> : "Edit"}
@@ -112,6 +115,9 @@ function MetricsPage() {
           ? Array.from({ length: 6 }).map((_, i) => <div key={i} className="h-32 animate-pulse rounded-xl bg-muted" />)
           : null}
       </div>
+      {!catalogue.isLoading && filtered.length === 0 ? (
+        <p className="mt-8 text-center text-sm text-muted-foreground">No metric matches that search.</p>
+      ) : null}
     </AppShell>
   );
 }
