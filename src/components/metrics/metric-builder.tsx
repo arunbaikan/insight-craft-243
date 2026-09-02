@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import { Loader2, Plus, Sparkles, Trash2, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
 import {
