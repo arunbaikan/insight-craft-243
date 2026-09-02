@@ -135,8 +135,61 @@ export const previewMetric = createServerFn({ method: "POST" })
     }
   });
 
+const TRACKED_FIELDS = [
+  "key",
+  "name",
+  "description",
+  "metric_kind",
+  "source_entity",
+  "aggregation",
+  "value_field",
+  "filters",
+  "group_by",
+  "time_grain",
+  "formula",
+  "comparison",
+  "sign_convention",
+  "value_type",
+  "unit",
+  "decimals",
+  "scale",
+  "target_value",
+  "thresholds",
+] as const;
+
+function diffFields(before: Record<string, unknown>, after: Record<string, unknown>): string[] {
+  return TRACKED_FIELDS.filter(
+    (f) => JSON.stringify(before[f] ?? null) !== JSON.stringify(after[f] ?? null),
+  );
+}
+
+export type MetricVersion = {
+  id: string;
+  version: number;
+  actor: string;
+  change_note: string | null;
+  changed_fields: string[];
+  created_at: string;
+  snapshot: MetricDefinition;
+};
+
+/** Full changelog for a metric, newest first. */
+export const getMetricVersions = createServerFn({ method: "POST" })
+  .inputValidator((input: { metricId: string }) => input)
+  .handler(async ({ data }): Promise<MetricVersion[]> => {
+    const { getServerSupabase } = await import("@/lib/supabase-data.server");
+    const supabase = getServerSupabase();
+    const { data: rows, error } = await supabase
+      .from("metric_definition_versions")
+      .select("id, version, actor, change_note, changed_fields, created_at, snapshot")
+      .eq("metric_id", data.metricId)
+      .order("version", { ascending: false });
+    if (error) throw new Error(error.message);
+    return (rows ?? []) as unknown as MetricVersion[];
+  });
+
 export const saveMetric = createServerFn({ method: "POST" })
-  .inputValidator((input: { definition: MetricDefinition }) => input)
+  .inputValidator((input: { definition: MetricDefinition; note?: string }) => input)
   .handler(async ({ data }) => {
     const { getServerSupabase } = await import("@/lib/supabase-data.server");
     const supabase = getServerSupabase();
@@ -169,12 +222,18 @@ export const saveMetric = createServerFn({ method: "POST" })
       const { data: existing } = await supabase.from("metric_definitions").select("*").eq("id", d.id).single();
       if (existing && (existing as { is_system: boolean }).is_system)
         throw new Error("System metrics are read-only. Clone it to make changes.");
+      const prev = (existing ?? {}) as Record<string, unknown>;
       const version = ((existing as { version?: number } | null)?.version ?? 1) + 1;
+      const changed = diffFields(prev, payload as unknown as Record<string, unknown>);
       if (existing)
+        // Snapshot the outgoing definition so any earlier version can be restored
+        // and dashboards that relied on it keep an auditable history.
         await supabase.from("metric_definition_versions").insert({
           metric_id: d.id,
           version: (existing as { version: number }).version,
           snapshot: existing as never,
+          change_note: data.note?.trim() || null,
+          changed_fields: changed as never,
         });
       const { data: updated, error } = await supabase
         .from("metric_definitions")
@@ -183,6 +242,12 @@ export const saveMetric = createServerFn({ method: "POST" })
         .select()
         .single();
       if (error) throw new Error(error.message);
+
+      const oldKey = (prev as { key?: string }).key;
+      if (oldKey && oldKey !== d.key) await repointKey(supabase, oldKey, d.key);
+      // Stale cached values must not outlive the definition that produced them.
+      await supabase.from("metric_cache").delete().eq("metric_key", d.key);
+      if (oldKey) await supabase.from("metric_cache").delete().eq("metric_key", oldKey);
       return updated as unknown as MetricDefinition;
     }
 
@@ -195,6 +260,89 @@ export const saveMetric = createServerFn({ method: "POST" })
     return inserted as unknown as MetricDefinition;
   });
 
+/**
+ * Renaming a metric key would orphan every widget bound to the old key, so the
+ * bindings and any formulas referencing it are rewritten in the same save.
+ */
+async function repointKey(
+  supabase: { from: (t: string) => any },
+  oldKey: string,
+  newKey: string,
+): Promise<void> {
+  const { data: widgets } = await supabase.from("widgets").select("id, metric_binding");
+  for (const w of (widgets ?? []) as { id: string; metric_binding: unknown }[]) {
+    const json = JSON.stringify(w.metric_binding ?? {});
+    if (!json.includes(`"${oldKey}"`)) continue;
+    await supabase
+      .from("widgets")
+      .update({ metric_binding: JSON.parse(json.split(`"${oldKey}"`).join(`"${newKey}"`)) })
+      .eq("id", w.id);
+  }
+  const { data: metrics } = await supabase.from("metric_definitions").select("id, formula");
+  for (const m of (metrics ?? []) as { id: string; formula: unknown }[]) {
+    if (!m.formula) continue;
+    const json = JSON.stringify(m.formula);
+    if (!json.includes(`"${oldKey}"`)) continue;
+    await supabase
+      .from("metric_definitions")
+      .update({ formula: JSON.parse(json.split(`"${oldKey}"`).join(`"${newKey}"`)) })
+      .eq("id", m.id);
+  }
+}
+
+/** Roll a metric back to an earlier snapshot; the rollback itself is a new version. */
+export const restoreMetricVersion = createServerFn({ method: "POST" })
+  .inputValidator((input: { metricId: string; version: number }) => input)
+  .handler(async ({ data }): Promise<MetricDefinition> => {
+    const { getServerSupabase } = await import("@/lib/supabase-data.server");
+    const supabase = getServerSupabase();
+    const { data: row, error } = await supabase
+      .from("metric_definition_versions")
+      .select("snapshot")
+      .eq("metric_id", data.metricId)
+      .eq("version", data.version)
+      .single();
+    if (error || !row) throw new Error("That version is no longer available.");
+    const snapshot = (row as { snapshot: MetricDefinition }).snapshot;
+    const { data: current } = await supabase
+      .from("metric_definitions")
+      .select("*")
+      .eq("id", data.metricId)
+      .single();
+    if (!current) throw new Error("Metric not found.");
+    const cur = current as unknown as Record<string, unknown>;
+    const nextVersion = ((cur["version"] as number) ?? 1) + 1;
+    const restored = { ...(snapshot as unknown as Record<string, unknown>) };
+    delete restored["id"];
+    delete restored["created_at"];
+    delete restored["version"];
+    delete restored["is_system"];
+
+    await supabase.from("metric_definition_versions").insert({
+      metric_id: data.metricId,
+      version: cur["version"] as number,
+      snapshot: current as never,
+      change_note: `Restored version ${data.version}`,
+      changed_fields: diffFields(cur, restored) as never,
+    });
+
+    const { data: updated, error: upErr } = await supabase
+      .from("metric_definitions")
+      .update({ ...restored, version: nextVersion, updated_at: new Date().toISOString() })
+      .eq("id", data.metricId)
+      .eq("is_system", false)
+      .select()
+      .single();
+    if (upErr) throw new Error(upErr.message);
+
+    const oldKey = cur["key"] as string;
+    const newKey = restored["key"] as string;
+    if (oldKey && newKey && oldKey !== newKey) await repointKey(supabase, oldKey, newKey);
+    await supabase.from("metric_cache").delete().eq("metric_key", newKey);
+    await supabase.from("metric_cache").delete().eq("metric_key", oldKey);
+    return updated as unknown as MetricDefinition;
+  });
+
 export const deleteMetric = createServerFn({ method: "POST" })
   .inputValidator((input: { id: string }) => input)
   .handler(async ({ data }) => {
@@ -204,3 +352,4 @@ export const deleteMetric = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
