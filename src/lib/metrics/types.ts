@@ -40,6 +40,7 @@ export const FORMULA_FUNCTIONS = [
   "max",
   "coalesce",
   "round",
+  "avg_per_month",
 ] as const;
 
 export type FormulaFn = (typeof FORMULA_FUNCTIONS)[number];

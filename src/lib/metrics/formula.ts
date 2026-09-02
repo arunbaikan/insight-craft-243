@@ -5,6 +5,8 @@ export type FormulaScope = {
   get: (key: string) => number;
   /** Percent change of a metric against a lag expressed in months. */
   pctChange: (key: string, lagMonths: number) => number;
+  /** Number of month buckets in the current evaluation scope. */
+  months: number;
 };
 
 const ARITY: Record<string, [number, number]> = {
@@ -15,6 +17,7 @@ const ARITY: Record<string, [number, number]> = {
   max: [2, 8],
   coalesce: [1, 8],
   round: [1, 2],
+  avg_per_month: [1, 1],
 };
 
 export function collectMetricRefs(node: FormulaNode | null | undefined, out = new Set<string>()) {
@@ -126,6 +129,8 @@ export function evaluateFormula(node: FormulaNode, scope: FormulaScope): number 
           if (arg.type === "metric") return scope.pctChange(arg.key, lag);
           return 0;
         }
+        case "avg_per_month":
+          return scope.months > 0 ? a[0]! / scope.months : a[0]!;
         case "abs":
           return Math.abs(a[0]!);
         case "min":

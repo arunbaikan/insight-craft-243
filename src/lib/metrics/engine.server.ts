@@ -228,6 +228,7 @@ export class MetricEngine {
     for (const ref of refs) deps.set(ref, await this.resolve(ref));
 
     const pick = (scope: "total" | "priorPeriodTotal" | "priorYearTotal") => ({
+      months: this.buckets.length,
       get: (k: string) => deps.get(k)?.[scope] ?? 0,
       pctChange: (k: string, lag: number) => {
         const d = deps.get(k);
@@ -240,6 +241,7 @@ export class MetricEngine {
 
     const series = this.buckets.map((_, i) => {
       const scope = {
+        months: 1,
         get: (k: string) => deps.get(k)?.series[i] ?? 0,
         pctChange: (k: string, lag: number) => {
           const s = deps.get(k)?.series;
