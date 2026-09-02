@@ -785,6 +785,9 @@ export type Database = {
       }
       metric_definition_versions: {
         Row: {
+          actor: string
+          change_note: string | null
+          changed_fields: Json
           created_at: string
           id: string
           metric_id: string
@@ -792,6 +795,9 @@ export type Database = {
           version: number
         }
         Insert: {
+          actor?: string
+          change_note?: string | null
+          changed_fields?: Json
           created_at?: string
           id?: string
           metric_id: string
@@ -799,6 +805,9 @@ export type Database = {
           version: number
         }
         Update: {
+          actor?: string
+          change_note?: string | null
+          changed_fields?: Json
           created_at?: string
           id?: string
           metric_id?: string
