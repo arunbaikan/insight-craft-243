@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { getDashboard, getDashboardData, type WidgetPayload } from "@/lib/dashboards.functions";
 import { PERIOD_OPTIONS } from "@/lib/metrics/period";
 
-export const Route = createFileRoute("/dashboards/$slug")({
+export const Route = createFileRoute("/dashboards/$slug/")({
   loader: async ({ params }) => {
     const bundle = await getDashboard({ data: { slug: params.slug } });
     if (!bundle) throw notFound();
