@@ -10,43 +10,43 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as DashboardsSlugRouteImport } from './routes/dashboards.$slug'
+import { Route as DashboardsSlugIndexRouteImport } from './routes/dashboards.$slug.index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardsSlugRoute = DashboardsSlugRouteImport.update({
-  id: '/dashboards/$slug',
-  path: '/dashboards/$slug',
+const DashboardsSlugIndexRoute = DashboardsSlugIndexRouteImport.update({
+  id: '/dashboards/$slug/',
+  path: '/dashboards/$slug/',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/dashboards/$slug': typeof DashboardsSlugRoute
+  '/dashboards/$slug/': typeof DashboardsSlugIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/dashboards/$slug': typeof DashboardsSlugRoute
+  '/dashboards/$slug': typeof DashboardsSlugIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/dashboards/$slug': typeof DashboardsSlugRoute
+  '/dashboards/$slug/': typeof DashboardsSlugIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboards/$slug'
+  fullPaths: '/' | '/dashboards/$slug/'
   fileRoutesByTo: FileRoutesByTo
   to: '/' | '/dashboards/$slug'
-  id: '__root__' | '/' | '/dashboards/$slug'
+  id: '__root__' | '/' | '/dashboards/$slug/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DashboardsSlugRoute: typeof DashboardsSlugRoute
+  DashboardsSlugIndexRoute: typeof DashboardsSlugIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -58,11 +58,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dashboards/$slug': {
-      id: '/dashboards/$slug'
+    '/dashboards/$slug/': {
+      id: '/dashboards/$slug/'
       path: '/dashboards/$slug'
-      fullPath: '/dashboards/$slug'
-      preLoaderRoute: typeof DashboardsSlugRouteImport
+      fullPath: '/dashboards/$slug/'
+      preLoaderRoute: typeof DashboardsSlugIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -70,7 +70,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DashboardsSlugRoute: DashboardsSlugRoute,
+  DashboardsSlugIndexRoute: DashboardsSlugIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
