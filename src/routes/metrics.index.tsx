@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { getMetricCatalogue } from "@/lib/metrics.functions";
 import type { MetricDefinition } from "@/lib/metrics/types";
 
-export const Route = createFileRoute("/metrics")({
+export const Route = createFileRoute("/metrics/")({
   head: () => ({
     meta: [
       { title: "Metric library — Ledgerframe" },
