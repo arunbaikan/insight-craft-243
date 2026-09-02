@@ -92,6 +92,7 @@ export function MetricBuilder({
   const [issues, setIssues] = useState<ValidationIssue[]>([]);
   const [preview, setPreview] = useState<MetricResult | null>(null);
   const [previewError, setPreviewError] = useState<string | null>(null);
+  const [refs, setRefs] = useState<FormulaRefValue[]>([]);
 
   useEffect(() => {
     setDef(initial);
