@@ -635,12 +635,74 @@ export function MetricBuilder({
           ) : null}
         </div>
 
+        {def.id ? (
+          <div className="rounded-xl border border-border bg-card p-4">
+            <h3 className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <History className="size-3.5" /> Version history
+            </h3>
+            {history.isLoading ? (
+              <div className="mt-2 h-12 animate-pulse rounded-lg bg-muted" />
+            ) : (history.data ?? []).length === 0 ? (
+              <p className="mt-2 text-xs text-muted-foreground">
+                No earlier versions yet. Widgets keep working across edits — every save archives the previous definition.
+              </p>
+            ) : (
+              <ul className="mt-2 max-h-64 space-y-2 overflow-auto">
+                {(history.data ?? []).map((v) => (
+                  <li key={v.id} className="rounded-lg border border-border/70 p-2 text-xs">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-medium">Version {v.version}</span>
+                      <span className="text-[10px] text-muted-foreground">
+                        {new Date(v.created_at).toLocaleString()}
+                      </span>
+                    </div>
+                    {v.change_note ? <p className="mt-1 text-muted-foreground">{v.change_note}</p> : null}
+                    {v.changed_fields.length ? (
+                      <div className="mt-1 flex flex-wrap gap-1">
+                        {v.changed_fields.map((f) => (
+                          <Badge key={f} variant="outline" className="text-[10px]">{f.replace(/_/g, " ")}</Badge>
+                        ))}
+                      </div>
+                    ) : null}
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="mt-1 h-7 px-2 text-[11px]"
+                      disabled={restore.isPending}
+                      onClick={() => {
+                        if (confirm(`Restore version ${v.version}? Current settings become version ${def.version + 1}.`))
+                          restore.mutate(v.version);
+                      }}
+                    >
+                      <RotateCcw className="size-3" /> Restore
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ) : null}
+
+        {def.id ? (
+          <div className="space-y-1">
+            <Label htmlFor="change-note" className="text-xs">What changed?</Label>
+            <Input
+              id="change-note"
+              placeholder="e.g. Excluded intercompany accounts"
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+            />
+            <p className="text-[11px] text-muted-foreground">Stored with the archived version as a changelog entry.</p>
+          </div>
+        ) : null}
+
         <div className="flex gap-2">
           <Button className="flex-1" disabled={blocking || save.isPending} onClick={() => save.mutate(def)}>
             {save.isPending ? <Loader2 className="size-4 animate-spin" /> : null} Save metric
           </Button>
           <Button variant="outline" onClick={onCancel}>Cancel</Button>
         </div>
+
         {onDelete && def.id ? (
           <Button variant="ghost" className="w-full text-destructive hover:text-destructive" onClick={onDelete}>
             <Trash2 className="size-4" /> Delete metric
