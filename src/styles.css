@@ -132,6 +132,64 @@
   --sidebar-ring: oklch(0.551 0.027 264.364);
 }
 
+/* ---- ERP dashboard builder design tokens ---- */
+:root {
+  --background: oklch(0.975 0.005 250);
+  --card: oklch(1 0 0);
+  --foreground: oklch(0.22 0.045 258);
+  --primary: oklch(0.36 0.11 258);
+  --primary-foreground: oklch(0.985 0.005 250);
+  --brand: oklch(0.36 0.11 258);
+  --brand-strong: oklch(0.27 0.09 258);
+  --brand-soft: oklch(0.93 0.03 245);
+  --accent-cyan: oklch(0.72 0.13 232);
+  --accent-cyan-soft: oklch(0.88 0.07 226);
+  --accent-teal: oklch(0.72 0.11 178);
+  --accent-amber: oklch(0.78 0.14 72);
+  --positive: oklch(0.63 0.14 158);
+  --negative: oklch(0.6 0.19 25);
+  --grid-line: oklch(0.9 0.015 250);
+  --radius: 0.85rem;
+}
+
+.dark {
+  --brand: oklch(0.62 0.12 250);
+  --brand-strong: oklch(0.48 0.1 252);
+  --brand-soft: oklch(0.3 0.05 255);
+  --accent-cyan: oklch(0.74 0.13 232);
+  --accent-cyan-soft: oklch(0.42 0.08 230);
+  --accent-teal: oklch(0.72 0.11 178);
+  --accent-amber: oklch(0.78 0.14 72);
+  --positive: oklch(0.72 0.13 158);
+  --negative: oklch(0.68 0.17 25);
+  --grid-line: oklch(1 0 0 / 12%);
+}
+
+@theme inline {
+  --color-brand: var(--brand);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-soft: var(--brand-soft);
+  --color-accent-cyan: var(--accent-cyan);
+  --color-accent-cyan-soft: var(--accent-cyan-soft);
+  --color-accent-teal: var(--accent-teal);
+  --color-accent-amber: var(--accent-amber);
+  --color-positive: var(--positive);
+  --color-negative: var(--negative);
+  --color-grid-line: var(--grid-line);
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+}
+
+@utility grid-canvas {
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+}
+
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
+
 @layer base {
   * {
     border-color: var(--color-border);
@@ -140,5 +198,15 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: var(--font-sans);
+  }
+
+  h1,
+  h2,
+  h3,
+  .font-display {
+    font-family: var(--font-display);
+    letter-spacing: -0.015em;
   }
 }
+
