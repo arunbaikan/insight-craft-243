@@ -225,7 +225,26 @@ export class MetricEngine {
 
     const refs = [...collectMetricRefs(def.formula)];
     const deps = new Map<string, Runtime>();
-    for (const ref of refs) deps.set(ref, await this.resolve(ref));
+    for (const ref of refs) {
+      const rt = await this.resolve(ref);
+      // Feed formulas the *presented* value of each input: a metric flagged
+      // "invert" reads as a positive figure everywhere it is shown, so it must
+      // do the same inside an expression (income - expenses, quick ratio, …).
+      const rd = this.defs.get(ref);
+      const factor = (rd?.sign_convention === "invert" ? -1 : 1) * (rd?.scale ?? 1);
+      deps.set(
+        ref,
+        factor === 1
+          ? rt
+          : {
+              series: rt.series.map((v) => v * factor),
+              total: rt.total * factor,
+              priorPeriodTotal: rt.priorPeriodTotal * factor,
+              priorYearTotal: rt.priorYearTotal * factor,
+              breakdown: rt.breakdown.map((b) => ({ ...b, value: b.value * factor })),
+            },
+      );
+    }
 
     const pick = (scope: "total" | "priorPeriodTotal" | "priorYearTotal") => ({
       months: this.buckets.length,
