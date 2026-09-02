@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ConnectorsRouteImport } from './routes/connectors'
 import { Route as MetricsRouteImport } from './routes/metrics'
 import { Route as DashboardsSlugIndexRouteImport } from './routes/dashboards.$slug.index'
 import { Route as DashboardsSlugEditRouteImport } from './routes/dashboards.$slug.edit'
@@ -17,6 +18,11 @@ import { Route as DashboardsSlugEditRouteImport } from './routes/dashboards.$slu
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConnectorsRoute = ConnectorsRouteImport.update({
+  id: '/connectors',
+  path: '/connectors',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MetricsRoute = MetricsRouteImport.update({
@@ -37,12 +43,14 @@ const DashboardsSlugEditRoute = DashboardsSlugEditRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/connectors': typeof ConnectorsRoute
   '/metrics': typeof MetricsRoute
   '/dashboards/$slug/edit': typeof DashboardsSlugEditRoute
   '/dashboards/$slug/': typeof DashboardsSlugIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/connectors': typeof ConnectorsRoute
   '/metrics': typeof MetricsRoute
   '/dashboards/$slug/edit': typeof DashboardsSlugEditRoute
   '/dashboards/$slug': typeof DashboardsSlugIndexRoute
@@ -50,18 +58,30 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/connectors': typeof ConnectorsRoute
   '/metrics': typeof MetricsRoute
   '/dashboards/$slug/edit': typeof DashboardsSlugEditRoute
   '/dashboards/$slug/': typeof DashboardsSlugIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/metrics' | '/dashboards/$slug/edit' | '/dashboards/$slug/'
+  fullPaths:
+    | '/'
+    | '/connectors'
+    | '/metrics'
+    | '/dashboards/$slug/edit'
+    | '/dashboards/$slug/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/metrics' | '/dashboards/$slug/edit' | '/dashboards/$slug'
+  to:
+    | '/'
+    | '/connectors'
+    | '/metrics'
+    | '/dashboards/$slug/edit'
+    | '/dashboards/$slug'
   id:
     | '__root__'
     | '/'
+    | '/connectors'
     | '/metrics'
     | '/dashboards/$slug/edit'
     | '/dashboards/$slug/'
@@ -69,6 +89,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ConnectorsRoute: typeof ConnectorsRoute
   MetricsRoute: typeof MetricsRoute
   DashboardsSlugEditRoute: typeof DashboardsSlugEditRoute
   DashboardsSlugIndexRoute: typeof DashboardsSlugIndexRoute
@@ -81,6 +102,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/connectors': {
+      id: '/connectors'
+      path: '/connectors'
+      fullPath: '/connectors'
+      preLoaderRoute: typeof ConnectorsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/metrics': {
@@ -109,6 +137,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ConnectorsRoute: ConnectorsRoute,
   MetricsRoute: MetricsRoute,
   DashboardsSlugEditRoute: DashboardsSlugEditRoute,
   DashboardsSlugIndexRoute: DashboardsSlugIndexRoute,
