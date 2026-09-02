@@ -586,12 +586,39 @@ export function MetricBuilder({
           )}
         </div>
 
+        <div className="rounded-xl border border-border bg-card p-4">
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Used by</h3>
+          {usedBy.length === 0 ? (
+            <p className="mt-2 text-xs text-muted-foreground">
+              {def.id ? "No dashboard widget binds this metric yet." : "Save the metric to bind it to a widget."}
+            </p>
+          ) : (
+            <ul className="mt-2 space-y-1 text-xs">
+              {usedBy.map((d) => (
+                <li key={d.slug}>
+                  <Link to="/dashboards/$slug" params={{ slug: d.slug }} className="text-brand hover:underline">
+                    {d.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+          {def.id ? (
+            <p className="mt-2 text-[11px] text-muted-foreground">Version {def.version} — saving creates version {def.version + 1}.</p>
+          ) : null}
+        </div>
+
         <div className="flex gap-2">
           <Button className="flex-1" disabled={blocking || save.isPending} onClick={() => save.mutate(def)}>
             {save.isPending ? <Loader2 className="size-4 animate-spin" /> : null} Save metric
           </Button>
           <Button variant="outline" onClick={onCancel}>Cancel</Button>
         </div>
+        {onDelete && def.id ? (
+          <Button variant="ghost" className="w-full text-destructive hover:text-destructive" onClick={onDelete}>
+            <Trash2 className="size-4" /> Delete metric
+          </Button>
+        ) : null}
       </aside>
     </div>
   );
