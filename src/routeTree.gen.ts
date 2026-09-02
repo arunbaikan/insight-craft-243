@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardsSlugIndexRouteImport } from './routes/dashboards.$slug.index'
+import { Route as DashboardsSlugEditRouteImport } from './routes/dashboards.$slug.edit'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,30 +23,39 @@ const DashboardsSlugIndexRoute = DashboardsSlugIndexRouteImport.update({
   path: '/dashboards/$slug/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardsSlugEditRoute = DashboardsSlugEditRouteImport.update({
+  id: '/dashboards/$slug/edit',
+  path: '/dashboards/$slug/edit',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/dashboards/$slug/edit': typeof DashboardsSlugEditRoute
   '/dashboards/$slug/': typeof DashboardsSlugIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/dashboards/$slug/edit': typeof DashboardsSlugEditRoute
   '/dashboards/$slug': typeof DashboardsSlugIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/dashboards/$slug/edit': typeof DashboardsSlugEditRoute
   '/dashboards/$slug/': typeof DashboardsSlugIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboards/$slug/'
+  fullPaths: '/' | '/dashboards/$slug/edit' | '/dashboards/$slug/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboards/$slug'
-  id: '__root__' | '/' | '/dashboards/$slug/'
+  to: '/' | '/dashboards/$slug/edit' | '/dashboards/$slug'
+  id: '__root__' | '/' | '/dashboards/$slug/edit' | '/dashboards/$slug/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DashboardsSlugEditRoute: typeof DashboardsSlugEditRoute
   DashboardsSlugIndexRoute: typeof DashboardsSlugIndexRoute
 }
 
@@ -65,11 +75,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardsSlugIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboards/$slug/edit': {
+      id: '/dashboards/$slug/edit'
+      path: '/dashboards/$slug/edit'
+      fullPath: '/dashboards/$slug/edit'
+      preLoaderRoute: typeof DashboardsSlugEditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DashboardsSlugEditRoute: DashboardsSlugEditRoute,
   DashboardsSlugIndexRoute: DashboardsSlugIndexRoute,
 }
 export const routeTree = rootRouteImport
