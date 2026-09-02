@@ -152,7 +152,7 @@ export function MetricBuilder({
   const restore = useMutation({
     mutationFn: (version: number) => restoreMetricVersion({ data: { metricId: def.id!, version } }),
     onSuccess: (m) => {
-      toast.success(`Restored version ${m.version - 1 > 0 ? "" : ""}${m.version}`.replace("  ", " "));
+      toast.success(`Restored — now version ${m.version}`);
       setDef(m);
       setFormulaText(formulaToText(m.formula));
       void history.refetch();
