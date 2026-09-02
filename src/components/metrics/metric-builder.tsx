@@ -77,13 +77,18 @@ export const EMPTY_METRIC: MetricDefinition = {
 export function MetricBuilder({
   catalogue,
   initial,
+  usedBy = [],
   onSaved,
   onCancel,
+  onDelete,
 }: {
   catalogue: MetricCatalogue;
   initial: MetricDefinition;
+  /** Dashboards whose widgets bind this metric — shown so edits are informed. */
+  usedBy?: { name: string; slug: string }[];
   onSaved: (m: MetricDefinition) => void;
   onCancel: () => void;
+  onDelete?: () => void;
 }) {
   const [def, setDef] = useState<MetricDefinition>(initial);
   const [formulaText, setFormulaText] = useState(formulaToText(initial.formula));
