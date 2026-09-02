@@ -171,7 +171,7 @@ function StatCardSparkline({ widget, payload }: WidgetProps) {
             {type === "line" ? (
               <LineChart data={data} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
                 <XAxis dataKey="label" {...axisProps} />
-                <YAxis {...axisProps} width={40} tickFormatter={(v: number) => formatValue(v, r?.value_type ?? "number", 0, null, true)} />
+                <YAxis {...axisProps} width={56} tickFormatter={(v: number) => formatValue(v, r?.value_type ?? "number", 0, null, true)} />
                 <ChartTooltip results={results} />
                 {results.map((res, i) => (
                   <Line key={res.key} type="monotone" dataKey={`s${i}`} stroke={seriesColor(undefined, i)} strokeWidth={2} dot={false} />
@@ -180,7 +180,7 @@ function StatCardSparkline({ widget, payload }: WidgetProps) {
             ) : (
               <BarChart data={data} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
                 <XAxis dataKey="label" {...axisProps} />
-                <YAxis {...axisProps} width={40} tickFormatter={(v: number) => formatValue(v, r?.value_type ?? "number", 0, null, true)} />
+                <YAxis {...axisProps} width={56} tickFormatter={(v: number) => formatValue(v, r?.value_type ?? "number", 0, null, true)} />
                 <ChartTooltip results={results} />
                 {results.map((res, i) => (
                   <Bar key={res.key} dataKey={`s${i}`} fill={seriesColor(undefined, i)} radius={[3, 3, 0, 0]} />
