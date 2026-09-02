@@ -116,6 +116,7 @@ export function MetricBuilder({
     onSuccess: (r) => {
       setPreview(r.result ?? null);
       setPreviewError(r.error ?? null);
+      setRefs(r.refs ?? []);
     },
     onError: (e: Error) => setPreviewError(e.message),
   });
