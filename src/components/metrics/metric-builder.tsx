@@ -128,13 +128,34 @@ export function MetricBuilder({
   });
 
   const save = useMutation({
-    mutationFn: (d: MetricDefinition) => saveMetric({ data: { definition: d } }),
+    mutationFn: (d: MetricDefinition) => saveMetric({ data: { definition: d, note } }),
     onSuccess: (m) => {
-      toast.success("Metric saved");
+      toast.success(m.version > 1 ? `Saved as version ${m.version}` : "Metric saved");
+      setNote("");
+      void history.refetch();
       onSaved(m);
     },
     onError: (e: Error) => toast.error(e.message),
   });
+
+  const history = useQuery({
+    queryKey: ["metric-versions", def.id],
+    queryFn: () => getMetricVersions({ data: { metricId: def.id! } }),
+    enabled: Boolean(def.id),
+  });
+
+  const restore = useMutation({
+    mutationFn: (version: number) => restoreMetricVersion({ data: { metricId: def.id!, version } }),
+    onSuccess: (m) => {
+      toast.success(`Restored version ${m.version - 1 > 0 ? "" : ""}${m.version}`.replace("  ", " "));
+      setDef(m);
+      setFormulaText(formulaToText(m.formula));
+      void history.refetch();
+      onSaved(m);
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
 
   // Live validate + preview whenever the definition settles.
   useEffect(() => {
