@@ -354,35 +354,78 @@ export function MetricBuilder({
               })}
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div>
-                <Label>Break down by</Label>
-                <Select value={def.group_by ?? "__none"} onValueChange={(v) => patch({ group_by: v === "__none" ? null : v })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="__none">No breakdown</SelectItem>
-                    {(entity?.fields ?? []).filter((f) => f.dimension).map((f) => (
-                      <SelectItem key={f.name} value={f.name}>{f.label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>Sign</Label>
-                <Select value={def.sign_convention} onValueChange={(v) => patch({ sign_convention: v as "natural" | "invert" })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="natural">Natural</SelectItem>
-                    <SelectItem value="invert">Invert (show as positive)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            <div>
+              <Label>Break down by</Label>
+              <Select value={def.group_by ?? "__none"} onValueChange={(v) => patch({ group_by: v === "__none" ? null : v })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__none">No breakdown</SelectItem>
+                  {(entity?.fields ?? []).filter((f) => f.dimension).map((f) => (
+                    <SelectItem key={f.name} value={f.name}>{f.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="mt-1 text-[11px] text-muted-foreground">
+                Powers donut and horizontal-bar widgets bound to this metric.
+              </p>
             </div>
           </section>
         )}
 
         <section className="space-y-4 rounded-xl border border-border bg-card p-4">
-          <h2 className="font-display text-sm font-semibold">3. Presentation and targets</h2>
+          <h2 className="font-display text-sm font-semibold">3. Shaping</h2>
+          <p className="text-xs text-muted-foreground">
+            How the raw number is turned into the figure people read.
+          </p>
+          <div className="grid gap-3 sm:grid-cols-4">
+            <div>
+              <Label>Time grain</Label>
+              <Select
+                value={def.time_grain}
+                onValueChange={(v) => patch({ time_grain: v as MetricDefinition["time_grain"] })}
+              >
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {["month", "quarter", "year"].map((g) => (
+                    <SelectItem key={g} value={g}>{g}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Sign</Label>
+              <Select value={def.sign_convention} onValueChange={(v) => patch({ sign_convention: v as "natural" | "invert" })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="natural">Natural</SelectItem>
+                  <SelectItem value="invert">Invert (show as positive)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="m-scale">Scale ×</Label>
+              <Input
+                id="m-scale"
+                type="number"
+                step="any"
+                value={def.scale}
+                onChange={(e) => patch({ scale: e.target.value === "" ? 1 : Number(e.target.value) })}
+              />
+            </div>
+            <div>
+              <Label htmlFor="m-unit">Unit suffix</Label>
+              <Input
+                id="m-unit"
+                placeholder="e.g. FTE"
+                value={def.unit ?? ""}
+                onChange={(e) => patch({ unit: e.target.value || null })}
+              />
+            </div>
+          </div>
+        </section>
+
+        <section className="space-y-4 rounded-xl border border-border bg-card p-4">
+          <h2 className="font-display text-sm font-semibold">4. Presentation and targets</h2>
           <div className="grid gap-3 sm:grid-cols-4">
             <div>
               <Label>Format</Label>
