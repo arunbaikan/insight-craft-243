@@ -79,6 +79,7 @@ function DashboardView() {
               </SelectContent>
             </Select>
           ))}
+          <CurrencyControls />
           <Select value={period} onValueChange={setPeriod}>
             <SelectTrigger className="h-9 w-40"><SelectValue /></SelectTrigger>
             <SelectContent>
