@@ -3,6 +3,7 @@ import { Copy, GripVertical, Settings2, Trash2 } from "lucide-react";
 import type { WidgetPayload, WidgetRecord } from "@/lib/dashboards.functions";
 import { renderWidget } from "@/components/widgets/registry";
 import { WidgetError, WidgetSkeleton } from "@/components/widgets/widget-frame";
+import { useCurrency } from "@/lib/currency";
 import { cn } from "@/lib/utils";
 
 export type GridWidget = WidgetRecord;
@@ -40,6 +41,9 @@ export function GridCanvas({
   onDelete?: ((id: string) => void) | undefined;
   onDuplicate?: ((id: string) => void) | undefined;
 }) {
+  // Subscribe so every widget re-renders when the presentation currency or
+  // the manually entered exchange rate changes.
+  useCurrency();
   const ref = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(1200);
   const [drag, setDrag] = useState<DragState | null>(null);

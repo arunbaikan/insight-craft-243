@@ -1,3 +1,4 @@
+import { convertFromBase, currencySymbol, getCurrency } from "@/lib/currency";
 import type { MetricResult, Thresholds, ValueType } from "@/lib/metrics/types";
 
 export function formatValue(
@@ -8,20 +9,25 @@ export function formatValue(
   compact = false,
 ): string {
   if (value === null || value === undefined || !Number.isFinite(value)) return "—";
+
+  if (valueType === "currency") {
+    // Source data is stored in the base currency; convert for presentation.
+    const converted = convertFromBase(value);
+    const symbol = currencySymbol(getCurrency().code);
+    const cabs = Math.abs(converted);
+    if (compact && cabs >= 1000) {
+      const div = cabs >= 1_000_000 ? 1_000_000 : 1000;
+      const suffix = cabs >= 1_000_000 ? "M" : "K";
+      return `${symbol}${(converted / div).toLocaleString("en-US", { maximumFractionDigits: 1 })}${suffix}`;
+    }
+    return `${symbol}${converted.toLocaleString("en-US", { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}`;
+  }
+
   const abs = Math.abs(value);
   const opts: Intl.NumberFormatOptions = {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
   };
-
-  if (valueType === "currency") {
-    if (compact && abs >= 1000) {
-      const div = abs >= 1_000_000 ? 1_000_000 : 1000;
-      const suffix = abs >= 1_000_000 ? "M" : "K";
-      return `$${(value / div).toLocaleString("en-US", { maximumFractionDigits: 1 })}${suffix}`;
-    }
-    return `$${value.toLocaleString("en-US", opts)}`;
-  }
   if (valueType === "percent") return `${value.toLocaleString("en-US", opts)}%`;
   if (valueType === "ratio") return value.toLocaleString("en-US", { minimumFractionDigits: Math.max(decimals, 2), maximumFractionDigits: Math.max(decimals, 2) });
   if (valueType === "months") return `${value.toLocaleString("en-US", { maximumFractionDigits: 1 })} Months`;
