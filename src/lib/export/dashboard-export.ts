@@ -243,13 +243,15 @@ async function exportPptx(ctx: ExportContext, base: string) {
           { text: "vs prev", options: { bold: true } },
           { text: "Target", options: { bold: true } },
         ],
-        ...rows.slice(0, 40).map((r) => [
-          r.widget,
-          r.metric,
-          r.value,
-          r.deltaPct === null ? "—" : `${r.deltaPct > 0 ? "+" : ""}${r.deltaPct.toFixed(1)}%`,
-          r.target === null ? "—" : String(r.target),
-        ]),
+        ...rows.slice(0, 40).map((r) =>
+          [
+            r.widget,
+            r.metric,
+            r.value,
+            r.deltaPct === null ? "—" : `${r.deltaPct > 0 ? "+" : ""}${r.deltaPct.toFixed(1)}%`,
+            r.target === null ? "—" : String(r.target),
+          ].map((text) => ({ text })),
+        ),
       ],
       { x: 0.4, y: 0.9, w: 9.2, fontSize: 10, border: { type: "solid", color: "DDDDDD", pt: 1 }, autoPage: true },
     );
