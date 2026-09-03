@@ -1,9 +1,10 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Pencil, RefreshCw } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { CurrencyControls } from "@/components/dashboard/currency-controls";
+import { DashboardExportMenu } from "@/components/dashboard/export-menu";
 import { GridCanvas } from "@/components/dashboard/grid-canvas";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -51,6 +52,20 @@ function DashboardView() {
     (data.data?.widgets ?? []).map((w) => [w.widget_id, w]),
   );
 
+  const boardRef = useRef<HTMLDivElement>(null);
+  const periodLabel = PERIOD_OPTIONS.find((p) => p.value === period)?.label ?? period;
+  const exportContext = () =>
+    boardRef.current && data.data
+      ? {
+          element: boardRef.current,
+          dashboardName: bundle.dashboard.name,
+          description: bundle.dashboard.description,
+          periodLabel,
+          widgets: bundle.widgets,
+          data: byId,
+        }
+      : null;
+
   return (
     <AppShell
       title={bundle.dashboard.name}
@@ -91,6 +106,7 @@ function DashboardView() {
           <Button variant="outline" size="icon" onClick={() => data.refetch()} aria-label="Refresh data">
             <RefreshCw className={data.isFetching ? "size-4 animate-spin" : "size-4"} />
           </Button>
+          <DashboardExportMenu getContext={exportContext} />
           <Button asChild variant="secondary">
             <Link to="/dashboards/$slug/edit" params={{ slug: bundle.dashboard.slug }}>
               <Pencil className="size-4" /> Edit
@@ -99,13 +115,15 @@ function DashboardView() {
         </>
       }
     >
-      <GridCanvas
-        widgets={bundle.widgets}
-        data={byId}
-        loading={data.isLoading}
-        cols={bundle.dashboard.layout_cols}
-        rowHeight={bundle.dashboard.row_height_px}
-      />
+      <div ref={boardRef} className="bg-background p-1">
+        <GridCanvas
+          widgets={bundle.widgets}
+          data={byId}
+          loading={data.isLoading}
+          cols={bundle.dashboard.layout_cols}
+          rowHeight={bundle.dashboard.row_height_px}
+        />
+      </div>
     </AppShell>
   );
 }
