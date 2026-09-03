@@ -3,6 +3,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Pencil, RefreshCw } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
+import { CurrencyControls } from "@/components/dashboard/currency-controls";
 import { GridCanvas } from "@/components/dashboard/grid-canvas";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
