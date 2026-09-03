@@ -1,4 +1,11 @@
-import { convertFromBase, currencySymbol, getCurrency } from "@/lib/currency";
+import {
+  compactUnit,
+  convertFromBase,
+  currencyDecimals,
+  currencyLocale,
+  currencySymbol,
+  getCurrency,
+} from "@/lib/currency";
 import type { MetricResult, Thresholds, ValueType } from "@/lib/metrics/types";
 
 export function formatValue(
