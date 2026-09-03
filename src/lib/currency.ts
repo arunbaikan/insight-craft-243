@@ -20,6 +20,40 @@ export function currencySymbol(code: string) {
   return CURRENCIES.find((c) => c.code === code)?.symbol ?? `${code} `;
 }
 
+/**
+ * Digit grouping differs by currency: INR uses the Indian 2-2-3 lakh/crore
+ * grouping (12,34,567) while western currencies use 1,234,567.
+ */
+const LOCALES: Partial<Record<CurrencyCode, string>> = {
+  INR: "en-IN",
+  EUR: "de-DE",
+  GBP: "en-GB",
+  JPY: "ja-JP",
+};
+
+export function currencyLocale(code: string) {
+  return LOCALES[code as CurrencyCode] ?? "en-US";
+}
+
+/** Currencies whose smallest unit is the whole unit — never show decimals. */
+export function currencyDecimals(code: string, decimals: number) {
+  return code === "JPY" ? 0 : decimals;
+}
+
+/** Compact abbreviation buckets: lakh/crore for INR, K/M elsewhere. */
+export function compactUnit(code: string, abs: number): { div: number; suffix: string } | null {
+  if (code === "INR") {
+    if (abs >= 10_000_000) return { div: 10_000_000, suffix: " Cr" };
+    if (abs >= 100_000) return { div: 100_000, suffix: " L" };
+    if (abs >= 1000) return { div: 1000, suffix: "K" };
+    return null;
+  }
+  if (abs >= 1_000_000_000) return { div: 1_000_000_000, suffix: "B" };
+  if (abs >= 1_000_000) return { div: 1_000_000, suffix: "M" };
+  if (abs >= 1000) return { div: 1000, suffix: "K" };
+  return null;
+}
+
 export type CurrencyState = { code: CurrencyCode; rate: number };
 
 /**

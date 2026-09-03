@@ -1,4 +1,11 @@
-import { convertFromBase, currencySymbol, getCurrency } from "@/lib/currency";
+import {
+  compactUnit,
+  convertFromBase,
+  currencyDecimals,
+  currencyLocale,
+  currencySymbol,
+  getCurrency,
+} from "@/lib/currency";
 import type { MetricResult, Thresholds, ValueType } from "@/lib/metrics/types";
 
 export function formatValue(
@@ -13,14 +20,19 @@ export function formatValue(
   if (valueType === "currency") {
     // Source data is stored in the base currency; convert for presentation.
     const converted = convertFromBase(value);
-    const symbol = currencySymbol(getCurrency().code);
+    const code = getCurrency().code;
+    const symbol = currencySymbol(code);
+    const locale = currencyLocale(code);
+    const dp = currencyDecimals(code, decimals);
     const cabs = Math.abs(converted);
-    if (compact && cabs >= 1000) {
-      const div = cabs >= 1_000_000 ? 1_000_000 : 1000;
-      const suffix = cabs >= 1_000_000 ? "M" : "K";
-      return `${symbol}${(converted / div).toLocaleString("en-US", { maximumFractionDigits: 1 })}${suffix}`;
+    if (compact) {
+      // INR abbreviates in lakh/crore; other currencies in K/M/B.
+      const unit = compactUnit(code, cabs);
+      if (unit) {
+        return `${symbol}${(converted / unit.div).toLocaleString(locale, { maximumFractionDigits: 1 })}${unit.suffix}`;
+      }
     }
-    return `${symbol}${converted.toLocaleString("en-US", { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}`;
+    return `${symbol}${converted.toLocaleString(locale, { minimumFractionDigits: dp, maximumFractionDigits: dp })}`;
   }
 
   const abs = Math.abs(value);
