@@ -3,6 +3,7 @@ import { Copy, GripVertical, Settings2, Trash2 } from "lucide-react";
 import type { WidgetPayload, WidgetRecord } from "@/lib/dashboards.functions";
 import { renderWidget } from "@/components/widgets/registry";
 import { WidgetError, WidgetSkeleton } from "@/components/widgets/widget-frame";
+import { useCurrency } from "@/lib/currency";
 import { cn } from "@/lib/utils";
 
 export type GridWidget = WidgetRecord;
