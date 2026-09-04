@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { FpaShell, KpiCard, Panel, money, pct } from "@/components/fpa/fpa-shell";
 import { useFpa } from "@/lib/fpa/store";
 import { ACTUAL_MONTHS, computeVariance } from "@/lib/fpa/engine";
+import { varianceCommentary } from "@/lib/fpa/analytics";
 
 export const Route = createFileRoute("/fpa/variance")({
   head: () => ({
@@ -126,6 +127,23 @@ function VariancePage() {
                 ))}
               </tbody>
             </table>
+          </div>
+        </Panel>
+
+        <Panel title="Automatic commentary" description="Draft narrative for the month-end pack, written from the variances above.">
+          <div className="space-y-3">
+            {varianceCommentary(rows, (v) => money(v, true)).map((n) => (
+              <div key={n.headline} className="rounded-lg border border-border bg-muted/30 p-3">
+                <p
+                  className={`text-sm font-semibold ${
+                    n.severity === "good" ? "text-positive" : n.severity === "bad" ? "text-negative" : ""
+                  }`}
+                >
+                  {n.headline}
+                </p>
+                <p className="mt-1 text-sm text-muted-foreground">{n.detail}</p>
+              </div>
+            ))}
           </div>
         </Panel>
       </div>
