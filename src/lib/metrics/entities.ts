@@ -61,4 +61,9 @@ export const ENTITY_CONFIG: Record<string, EntityConfig> = {
   customers: { table: "customers", dateField: null, columns: "name, credit_limit, is_active, source, id" },
   vendors: { table: "vendors", dateField: null, columns: "name, is_active, source, id" },
   items: { table: "items", dateField: null, columns: "name, category, unit_price, source, id" },
+  plan_facts: {
+    table: "plan_facts",
+    dateField: "month_date",
+    columns: "month_date, month_key, series, line_key, line_label, category, amount_base, scenario_id, scenario_name",
+  },
 };
