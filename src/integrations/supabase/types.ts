@@ -950,6 +950,48 @@ export type Database = {
         }
         Relationships: []
       }
+      plan_facts: {
+        Row: {
+          amount_base: number
+          category: string
+          id: string
+          line_key: string
+          line_label: string
+          month_date: string
+          month_key: string
+          published_at: string
+          scenario_id: string
+          scenario_name: string
+          series: string
+        }
+        Insert: {
+          amount_base?: number
+          category: string
+          id?: string
+          line_key: string
+          line_label: string
+          month_date: string
+          month_key: string
+          published_at?: string
+          scenario_id: string
+          scenario_name: string
+          series: string
+        }
+        Update: {
+          amount_base?: number
+          category?: string
+          id?: string
+          line_key?: string
+          line_label?: string
+          month_date?: string
+          month_key?: string
+          published_at?: string
+          scenario_id?: string
+          scenario_name?: string
+          series?: string
+        }
+        Relationships: []
+      }
       roles: {
         Row: {
           id: string
