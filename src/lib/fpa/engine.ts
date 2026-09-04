@@ -144,11 +144,11 @@ const STREAM_BASE: Record<RevenueStream, number> = {
 };
 
 const OPEX_BASE: Record<OpexCategory, number> = {
-  Marketing: 96_000,
-  Sales: 74_000,
-  "R&D": 58_000,
-  "G&A": 61_000,
-  Facilities: 27_000,
+  Marketing: 72_000,
+  Sales: 54_000,
+  "R&D": 44_000,
+  "G&A": 41_000,
+  Facilities: 19_000,
 };
 
 export const ACTUALS: ActualRow[] = (() => {
@@ -167,7 +167,7 @@ export const ACTUALS: ActualRow[] = (() => {
       month,
       revenueByStream,
       cogs: Math.round(revenue * (0.36 + rand() * 0.03)),
-      payroll: Math.round((298_000 + i * 4200) * (0.98 + rand() * 0.04)),
+      payroll: Math.round((236_000 + i * 3200) * (0.98 + rand() * 0.04)),
       opexByCategory,
       capex: Math.round(18_000 * (0.6 + rand())),
       headcount: 74 + Math.round(i * 1.1),
@@ -402,7 +402,16 @@ export function computePlan(scenario: Scenario, headcount: HeadcountRow[]): Plan
 
 /** Actual months expressed in the same shape so charts can concatenate them. */
 export function actualsAsPlanRows(): PlanRow[] {
-  let cash = BASE_ASSUMPTIONS.openingCash * 0.82;
+  // Work backwards from the plan's opening cash so history joins the forecast
+  // without a step change at the handover month.
+  const flows = ACTUALS.map((r) => {
+    const t = actualTotals(r);
+    const interest = (BASE_ASSUMPTIONS.debt * (BASE_ASSUMPTIONS.interestRatePct / 100)) / 12;
+    const pretax = t.ebitda - BASE_ASSUMPTIONS.daPerMonth - interest;
+    const tax = pretax > 0 ? pretax * (BASE_ASSUMPTIONS.taxRatePct / 100) : 0;
+    return t.ebitda - r.capex - interest - tax;
+  });
+  let cash = BASE_ASSUMPTIONS.openingCash - flows.reduce((a, b) => a + b, 0);
   return ACTUALS.map((r) => {
     const t = actualTotals(r);
     const da = BASE_ASSUMPTIONS.daPerMonth;
