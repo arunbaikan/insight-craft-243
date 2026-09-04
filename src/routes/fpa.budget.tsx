@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -99,8 +99,8 @@ function BudgetPage() {
               {groups.map((group) => {
                 const lines = BUDGET_LINES.filter((l) => l.group === group);
                 return (
-                  <>
-                    <tr key={group} className="bg-muted/50">
+                  <Fragment key={group}>
+                    <tr className="bg-muted/50">
                       <td className="sticky left-0 z-10 bg-muted/50 px-2 py-1.5 text-xs font-semibold uppercase tracking-wide" colSpan={2}>
                         {group}
                       </td>
@@ -145,7 +145,7 @@ function BudgetPage() {
                         </tr>
                       );
                     })}
-                  </>
+                  </Fragment>
                 );
               })}
               <tr className="border-t-2 border-border font-semibold">
