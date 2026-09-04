@@ -9,3 +9,4 @@
 - [x] Formula editor with inline validation and live preview values
 - [x] Dashboard viewer: open a saved dashboard, apply period + global filters, charts update live
 - [x] Metric versioning: changelog notes, archived snapshots, one-click restore, binding-safe key renames
+- [x] FP&A module (frontend-only): budget, rolling forecast, scenarios, variance, workforce, cash flow, reports
