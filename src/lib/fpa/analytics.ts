@@ -564,7 +564,7 @@ export function scorecard(scenario: Scenario, headcount: HeadcountRow[]): Scorec
     { label: "LTV : CAC", value: last.ltvToCac, format: "x", target: 3, higherIsBetter: true, note: "Three times or better is healthy." },
     { label: "CAC payback", value: last.paybackMonths, format: "months", target: 18, higherIsBetter: false, note: "Months of gross profit to recover acquisition cost." },
     { label: "Net revenue retention", value: last.nrrPct, format: "pct", target: 110, higherIsBetter: true, note: "Expansion net of churn." },
-    { label: "Runway", value: s.runwayMonths ?? 99, format: "months", target: 18, higherIsBetter: true, note: "Months of cash at the current burn." },
+    { label: "Runway", value: s.runwayMonths ?? 99, format: "months", target: 18, higherIsBetter: true, note: s.runwayMonths ? "Months of cash at the current burn." : "Plan is cash generative — no burn to fund." },
   ];
 
   return defs.map((d) => ({ ...d, status: rag(d.value, d.target, d.higherIsBetter) }));
