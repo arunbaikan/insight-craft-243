@@ -67,6 +67,8 @@ export function FpaShell({
             </Select>
           ) : null}
           <CurrencyControls />
+          <PublishPlanButton />
+          <PlanDashboardLink />
           {actions}
         </>
       }
