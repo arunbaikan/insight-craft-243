@@ -10,10 +10,14 @@ import { fpa, useFpa } from "@/lib/fpa/store";
 
 export const FPA_TABS = [
   { to: "/fpa", label: "Overview" },
+  { to: "/fpa/board", label: "Board pack" },
   { to: "/fpa/budget", label: "Budget" },
   { to: "/fpa/forecast", label: "Forecast" },
   { to: "/fpa/scenarios", label: "Scenarios" },
+  { to: "/fpa/sensitivity", label: "Sensitivity" },
   { to: "/fpa/variance", label: "Variance" },
+  { to: "/fpa/statements", label: "Statements" },
+  { to: "/fpa/unit-economics", label: "Unit economics" },
   { to: "/fpa/workforce", label: "Workforce" },
   { to: "/fpa/cashflow", label: "Cash flow" },
   { to: "/fpa/reports", label: "Reports" },

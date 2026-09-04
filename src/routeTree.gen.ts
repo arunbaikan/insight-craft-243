@@ -14,11 +14,15 @@ import { Route as ConnectorsRouteImport } from './routes/connectors'
 import { Route as FpaRouteImport } from './routes/fpa'
 import { Route as MetricsRouteImport } from './routes/metrics'
 import { Route as FpaIndexRouteImport } from './routes/fpa.index'
+import { Route as FpaBoardRouteImport } from './routes/fpa.board'
 import { Route as FpaBudgetRouteImport } from './routes/fpa.budget'
 import { Route as FpaCashflowRouteImport } from './routes/fpa.cashflow'
 import { Route as FpaForecastRouteImport } from './routes/fpa.forecast'
 import { Route as FpaReportsRouteImport } from './routes/fpa.reports'
 import { Route as FpaScenariosRouteImport } from './routes/fpa.scenarios'
+import { Route as FpaSensitivityRouteImport } from './routes/fpa.sensitivity'
+import { Route as FpaStatementsRouteImport } from './routes/fpa.statements'
+import { Route as FpaUnitEconomicsRouteImport } from './routes/fpa.unit-economics'
 import { Route as FpaVarianceRouteImport } from './routes/fpa.variance'
 import { Route as FpaWorkforceRouteImport } from './routes/fpa.workforce'
 import { Route as MetricsIndexRouteImport } from './routes/metrics.index'
@@ -52,6 +56,11 @@ const FpaIndexRoute = FpaIndexRouteImport.update({
   path: '/',
   getParentRoute: () => FpaRoute,
 } as any)
+const FpaBoardRoute = FpaBoardRouteImport.update({
+  id: '/board',
+  path: '/board',
+  getParentRoute: () => FpaRoute,
+} as any)
 const FpaBudgetRoute = FpaBudgetRouteImport.update({
   id: '/budget',
   path: '/budget',
@@ -75,6 +84,21 @@ const FpaReportsRoute = FpaReportsRouteImport.update({
 const FpaScenariosRoute = FpaScenariosRouteImport.update({
   id: '/scenarios',
   path: '/scenarios',
+  getParentRoute: () => FpaRoute,
+} as any)
+const FpaSensitivityRoute = FpaSensitivityRouteImport.update({
+  id: '/sensitivity',
+  path: '/sensitivity',
+  getParentRoute: () => FpaRoute,
+} as any)
+const FpaStatementsRoute = FpaStatementsRouteImport.update({
+  id: '/statements',
+  path: '/statements',
+  getParentRoute: () => FpaRoute,
+} as any)
+const FpaUnitEconomicsRoute = FpaUnitEconomicsRouteImport.update({
+  id: '/unit-economics',
+  path: '/unit-economics',
   getParentRoute: () => FpaRoute,
 } as any)
 const FpaVarianceRoute = FpaVarianceRouteImport.update({
@@ -118,11 +142,15 @@ export interface FileRoutesByFullPath {
   '/connectors': typeof ConnectorsRoute
   '/fpa': typeof FpaRouteWithChildren
   '/metrics': typeof MetricsRouteWithChildren
+  '/fpa/board': typeof FpaBoardRoute
   '/fpa/budget': typeof FpaBudgetRoute
   '/fpa/cashflow': typeof FpaCashflowRoute
   '/fpa/forecast': typeof FpaForecastRoute
   '/fpa/reports': typeof FpaReportsRoute
   '/fpa/scenarios': typeof FpaScenariosRoute
+  '/fpa/sensitivity': typeof FpaSensitivityRoute
+  '/fpa/statements': typeof FpaStatementsRoute
+  '/fpa/unit-economics': typeof FpaUnitEconomicsRoute
   '/fpa/variance': typeof FpaVarianceRoute
   '/fpa/workforce': typeof FpaWorkforceRoute
   '/metrics/$key': typeof MetricsKeyRoute
@@ -135,11 +163,15 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/connectors': typeof ConnectorsRoute
+  '/fpa/board': typeof FpaBoardRoute
   '/fpa/budget': typeof FpaBudgetRoute
   '/fpa/cashflow': typeof FpaCashflowRoute
   '/fpa/forecast': typeof FpaForecastRoute
   '/fpa/reports': typeof FpaReportsRoute
   '/fpa/scenarios': typeof FpaScenariosRoute
+  '/fpa/sensitivity': typeof FpaSensitivityRoute
+  '/fpa/statements': typeof FpaStatementsRoute
+  '/fpa/unit-economics': typeof FpaUnitEconomicsRoute
   '/fpa/variance': typeof FpaVarianceRoute
   '/fpa/workforce': typeof FpaWorkforceRoute
   '/metrics/$key': typeof MetricsKeyRoute
@@ -155,11 +187,15 @@ export interface FileRoutesById {
   '/connectors': typeof ConnectorsRoute
   '/fpa': typeof FpaRouteWithChildren
   '/metrics': typeof MetricsRouteWithChildren
+  '/fpa/board': typeof FpaBoardRoute
   '/fpa/budget': typeof FpaBudgetRoute
   '/fpa/cashflow': typeof FpaCashflowRoute
   '/fpa/forecast': typeof FpaForecastRoute
   '/fpa/reports': typeof FpaReportsRoute
   '/fpa/scenarios': typeof FpaScenariosRoute
+  '/fpa/sensitivity': typeof FpaSensitivityRoute
+  '/fpa/statements': typeof FpaStatementsRoute
+  '/fpa/unit-economics': typeof FpaUnitEconomicsRoute
   '/fpa/variance': typeof FpaVarianceRoute
   '/fpa/workforce': typeof FpaWorkforceRoute
   '/metrics/$key': typeof MetricsKeyRoute
@@ -176,11 +212,15 @@ export interface FileRouteTypes {
     | '/connectors'
     | '/fpa'
     | '/metrics'
+    | '/fpa/board'
     | '/fpa/budget'
     | '/fpa/cashflow'
     | '/fpa/forecast'
     | '/fpa/reports'
     | '/fpa/scenarios'
+    | '/fpa/sensitivity'
+    | '/fpa/statements'
+    | '/fpa/unit-economics'
     | '/fpa/variance'
     | '/fpa/workforce'
     | '/metrics/$key'
@@ -193,11 +233,15 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/connectors'
+    | '/fpa/board'
     | '/fpa/budget'
     | '/fpa/cashflow'
     | '/fpa/forecast'
     | '/fpa/reports'
     | '/fpa/scenarios'
+    | '/fpa/sensitivity'
+    | '/fpa/statements'
+    | '/fpa/unit-economics'
     | '/fpa/variance'
     | '/fpa/workforce'
     | '/metrics/$key'
@@ -212,11 +256,15 @@ export interface FileRouteTypes {
     | '/connectors'
     | '/fpa'
     | '/metrics'
+    | '/fpa/board'
     | '/fpa/budget'
     | '/fpa/cashflow'
     | '/fpa/forecast'
     | '/fpa/reports'
     | '/fpa/scenarios'
+    | '/fpa/sensitivity'
+    | '/fpa/statements'
+    | '/fpa/unit-economics'
     | '/fpa/variance'
     | '/fpa/workforce'
     | '/metrics/$key'
@@ -273,6 +321,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FpaIndexRouteImport
       parentRoute: typeof FpaRoute
     }
+    '/fpa/board': {
+      id: '/fpa/board'
+      path: '/board'
+      fullPath: '/fpa/board'
+      preLoaderRoute: typeof FpaBoardRouteImport
+      parentRoute: typeof FpaRoute
+    }
     '/fpa/budget': {
       id: '/fpa/budget'
       path: '/budget'
@@ -306,6 +361,27 @@ declare module '@tanstack/react-router' {
       path: '/scenarios'
       fullPath: '/fpa/scenarios'
       preLoaderRoute: typeof FpaScenariosRouteImport
+      parentRoute: typeof FpaRoute
+    }
+    '/fpa/sensitivity': {
+      id: '/fpa/sensitivity'
+      path: '/sensitivity'
+      fullPath: '/fpa/sensitivity'
+      preLoaderRoute: typeof FpaSensitivityRouteImport
+      parentRoute: typeof FpaRoute
+    }
+    '/fpa/statements': {
+      id: '/fpa/statements'
+      path: '/statements'
+      fullPath: '/fpa/statements'
+      preLoaderRoute: typeof FpaStatementsRouteImport
+      parentRoute: typeof FpaRoute
+    }
+    '/fpa/unit-economics': {
+      id: '/fpa/unit-economics'
+      path: '/unit-economics'
+      fullPath: '/fpa/unit-economics'
+      preLoaderRoute: typeof FpaUnitEconomicsRouteImport
       parentRoute: typeof FpaRoute
     }
     '/fpa/variance': {
@@ -361,22 +437,30 @@ declare module '@tanstack/react-router' {
 }
 
 interface FpaRouteChildren {
+  FpaBoardRoute: typeof FpaBoardRoute
   FpaBudgetRoute: typeof FpaBudgetRoute
   FpaCashflowRoute: typeof FpaCashflowRoute
   FpaForecastRoute: typeof FpaForecastRoute
   FpaReportsRoute: typeof FpaReportsRoute
   FpaScenariosRoute: typeof FpaScenariosRoute
+  FpaSensitivityRoute: typeof FpaSensitivityRoute
+  FpaStatementsRoute: typeof FpaStatementsRoute
+  FpaUnitEconomicsRoute: typeof FpaUnitEconomicsRoute
   FpaVarianceRoute: typeof FpaVarianceRoute
   FpaWorkforceRoute: typeof FpaWorkforceRoute
   FpaIndexRoute: typeof FpaIndexRoute
 }
 
 const FpaRouteChildren: FpaRouteChildren = {
+  FpaBoardRoute: FpaBoardRoute,
   FpaBudgetRoute: FpaBudgetRoute,
   FpaCashflowRoute: FpaCashflowRoute,
   FpaForecastRoute: FpaForecastRoute,
   FpaReportsRoute: FpaReportsRoute,
   FpaScenariosRoute: FpaScenariosRoute,
+  FpaSensitivityRoute: FpaSensitivityRoute,
+  FpaStatementsRoute: FpaStatementsRoute,
+  FpaUnitEconomicsRoute: FpaUnitEconomicsRoute,
   FpaVarianceRoute: FpaVarianceRoute,
   FpaWorkforceRoute: FpaWorkforceRoute,
   FpaIndexRoute: FpaIndexRoute,
