@@ -11,3 +11,5 @@
 - [x] Metric versioning: changelog notes, archived snapshots, one-click restore, binding-safe key renames
 - [x] FP&A module (frontend-only): budget, rolling forecast, scenarios, variance, workforce, cash flow, reports
 - [x] FP&A advanced analytics: tornado + two-driver table, Monte Carlo, goal seek, three-statement model, unit economics, board pack with auto commentary
+
+- Planning workspace publishes to a real dashboard (`plan_facts` table, plan/budget metrics, `/dashboards/financial-plan`, forward-looking periods).

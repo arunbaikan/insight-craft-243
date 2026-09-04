@@ -10,6 +10,9 @@ export const PERIOD_OPTIONS: { value: string; label: string }[] = [
   { value: "last_6m", label: "Last 6 months" },
   { value: "last_12m", label: "Last 12 months" },
   { value: "last_24m", label: "Last 24 months" },
+  { value: "next_6m", label: "Next 6 months (plan)" },
+  { value: "next_12m", label: "Next 12 months (plan)" },
+  { value: "plan_24m", label: "12 months back + 12 ahead" },
 ];
 
 function iso(y: number, m: number, d: number) {
@@ -71,6 +74,20 @@ export function resolvePeriod(key: string, today = new Date()): ResolvedPeriod {
       count = Number(key.replace("last_", "").replace("m", ""));
       const end = addMonths(y, m, -1);
       const s = addMonths(end.y, end.m, -(count - 1));
+      startY = s.y;
+      startM = s.m;
+      break;
+    }
+
+    // Forward-looking windows so published plan and budget months are visible.
+    case "next_6m":
+    case "next_12m": {
+      count = Number(key.replace("next_", "").replace("m", ""));
+      break;
+    }
+    case "plan_24m": {
+      count = 24;
+      const s = addMonths(y, m, -12);
       startY = s.y;
       startM = s.m;
       break;
