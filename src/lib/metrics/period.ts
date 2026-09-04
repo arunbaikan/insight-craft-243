@@ -76,6 +76,20 @@ export function resolvePeriod(key: string, today = new Date()): ResolvedPeriod {
       break;
     }
 
+    // Forward-looking windows so published plan and budget months are visible.
+    case "next_6m":
+    case "next_12m": {
+      count = Number(key.replace("next_", "").replace("m", ""));
+      break;
+    }
+    case "plan_24m": {
+      count = 24;
+      const s = addMonths(y, m, -12);
+      startY = s.y;
+      startM = s.m;
+      break;
+    }
+
     default: {
       count = 6;
       const s = addMonths(y, m, -5);
