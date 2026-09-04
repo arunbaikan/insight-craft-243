@@ -1,12 +1,14 @@
 import { Link } from "@tanstack/react-router";
-import { BarChart3, Calculator, LayoutGrid, PlugZap } from "lucide-react";
+import { BarChart3, Calculator, LayoutGrid, LineChart, PlugZap } from "lucide-react";
 import type { ReactNode } from "react";
 
 const NAV = [
   { to: "/", label: "Dashboards", icon: LayoutGrid },
+  { to: "/fpa", label: "Planning", icon: LineChart },
   { to: "/metrics", label: "Metrics", icon: Calculator },
   { to: "/connectors", label: "Connectors", icon: PlugZap },
 ] as const;
+
 
 export function AppShell({
   title,

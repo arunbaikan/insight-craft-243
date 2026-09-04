@@ -57,8 +57,9 @@ function ReportsPage() {
     { label: "Tax", fn: (r) => -r.tax },
     { label: "Net income", fn: (r) => r.netIncome, bold: true },
     { label: "Free cash flow", fn: (r) => r.freeCashFlow },
-    { label: "Closing cash", fn: (r) => r.rows_last_cash ?? r.cashBalance, bold: true },
-  ] as never;
+    { label: "Closing cash", fn: (r) => r.cashBalance, bold: true },
+  ];
+
 
   const total = (col: Column, fn: (r: PlanRow) => number) => col.rows.reduce((a, r) => a + fn(r), 0);
   const closing = (col: Column) => col.rows[col.rows.length - 1]!.cashBalance;
