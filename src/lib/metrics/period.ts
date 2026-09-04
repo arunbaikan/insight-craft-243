@@ -10,6 +10,9 @@ export const PERIOD_OPTIONS: { value: string; label: string }[] = [
   { value: "last_6m", label: "Last 6 months" },
   { value: "last_12m", label: "Last 12 months" },
   { value: "last_24m", label: "Last 24 months" },
+  { value: "next_6m", label: "Next 6 months (plan)" },
+  { value: "next_12m", label: "Next 12 months (plan)" },
+  { value: "plan_24m", label: "12 months back + 12 ahead" },
 ];
 
 function iso(y: number, m: number, d: number) {
