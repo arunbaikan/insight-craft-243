@@ -11,7 +11,16 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ConnectorsRouteImport } from './routes/connectors'
+import { Route as FpaRouteImport } from './routes/fpa'
 import { Route as MetricsRouteImport } from './routes/metrics'
+import { Route as FpaIndexRouteImport } from './routes/fpa.index'
+import { Route as FpaBudgetRouteImport } from './routes/fpa.budget'
+import { Route as FpaCashflowRouteImport } from './routes/fpa.cashflow'
+import { Route as FpaForecastRouteImport } from './routes/fpa.forecast'
+import { Route as FpaReportsRouteImport } from './routes/fpa.reports'
+import { Route as FpaScenariosRouteImport } from './routes/fpa.scenarios'
+import { Route as FpaVarianceRouteImport } from './routes/fpa.variance'
+import { Route as FpaWorkforceRouteImport } from './routes/fpa.workforce'
 import { Route as MetricsIndexRouteImport } from './routes/metrics.index'
 import { Route as MetricsKeyRouteImport } from './routes/metrics.$key'
 import { Route as MetricsNewRouteImport } from './routes/metrics.new'
@@ -28,10 +37,55 @@ const ConnectorsRoute = ConnectorsRouteImport.update({
   path: '/connectors',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FpaRoute = FpaRouteImport.update({
+  id: '/fpa',
+  path: '/fpa',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MetricsRoute = MetricsRouteImport.update({
   id: '/metrics',
   path: '/metrics',
   getParentRoute: () => rootRouteImport,
+} as any)
+const FpaIndexRoute = FpaIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => FpaRoute,
+} as any)
+const FpaBudgetRoute = FpaBudgetRouteImport.update({
+  id: '/budget',
+  path: '/budget',
+  getParentRoute: () => FpaRoute,
+} as any)
+const FpaCashflowRoute = FpaCashflowRouteImport.update({
+  id: '/cashflow',
+  path: '/cashflow',
+  getParentRoute: () => FpaRoute,
+} as any)
+const FpaForecastRoute = FpaForecastRouteImport.update({
+  id: '/forecast',
+  path: '/forecast',
+  getParentRoute: () => FpaRoute,
+} as any)
+const FpaReportsRoute = FpaReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => FpaRoute,
+} as any)
+const FpaScenariosRoute = FpaScenariosRouteImport.update({
+  id: '/scenarios',
+  path: '/scenarios',
+  getParentRoute: () => FpaRoute,
+} as any)
+const FpaVarianceRoute = FpaVarianceRouteImport.update({
+  id: '/variance',
+  path: '/variance',
+  getParentRoute: () => FpaRoute,
+} as any)
+const FpaWorkforceRoute = FpaWorkforceRouteImport.update({
+  id: '/workforce',
+  path: '/workforce',
+  getParentRoute: () => FpaRoute,
 } as any)
 const MetricsIndexRoute = MetricsIndexRouteImport.update({
   id: '/',
@@ -62,9 +116,18 @@ const DashboardsSlugEditRoute = DashboardsSlugEditRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/connectors': typeof ConnectorsRoute
+  '/fpa': typeof FpaRouteWithChildren
   '/metrics': typeof MetricsRouteWithChildren
+  '/fpa/budget': typeof FpaBudgetRoute
+  '/fpa/cashflow': typeof FpaCashflowRoute
+  '/fpa/forecast': typeof FpaForecastRoute
+  '/fpa/reports': typeof FpaReportsRoute
+  '/fpa/scenarios': typeof FpaScenariosRoute
+  '/fpa/variance': typeof FpaVarianceRoute
+  '/fpa/workforce': typeof FpaWorkforceRoute
   '/metrics/$key': typeof MetricsKeyRoute
   '/metrics/new': typeof MetricsNewRoute
+  '/fpa/': typeof FpaIndexRoute
   '/metrics/': typeof MetricsIndexRoute
   '/dashboards/$slug/edit': typeof DashboardsSlugEditRoute
   '/dashboards/$slug/': typeof DashboardsSlugIndexRoute
@@ -72,8 +135,16 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/connectors': typeof ConnectorsRoute
+  '/fpa/budget': typeof FpaBudgetRoute
+  '/fpa/cashflow': typeof FpaCashflowRoute
+  '/fpa/forecast': typeof FpaForecastRoute
+  '/fpa/reports': typeof FpaReportsRoute
+  '/fpa/scenarios': typeof FpaScenariosRoute
+  '/fpa/variance': typeof FpaVarianceRoute
+  '/fpa/workforce': typeof FpaWorkforceRoute
   '/metrics/$key': typeof MetricsKeyRoute
   '/metrics/new': typeof MetricsNewRoute
+  '/fpa': typeof FpaIndexRoute
   '/metrics': typeof MetricsIndexRoute
   '/dashboards/$slug/edit': typeof DashboardsSlugEditRoute
   '/dashboards/$slug': typeof DashboardsSlugIndexRoute
@@ -82,9 +153,18 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/connectors': typeof ConnectorsRoute
+  '/fpa': typeof FpaRouteWithChildren
   '/metrics': typeof MetricsRouteWithChildren
+  '/fpa/budget': typeof FpaBudgetRoute
+  '/fpa/cashflow': typeof FpaCashflowRoute
+  '/fpa/forecast': typeof FpaForecastRoute
+  '/fpa/reports': typeof FpaReportsRoute
+  '/fpa/scenarios': typeof FpaScenariosRoute
+  '/fpa/variance': typeof FpaVarianceRoute
+  '/fpa/workforce': typeof FpaWorkforceRoute
   '/metrics/$key': typeof MetricsKeyRoute
   '/metrics/new': typeof MetricsNewRoute
+  '/fpa/': typeof FpaIndexRoute
   '/metrics/': typeof MetricsIndexRoute
   '/dashboards/$slug/edit': typeof DashboardsSlugEditRoute
   '/dashboards/$slug/': typeof DashboardsSlugIndexRoute
@@ -94,9 +174,18 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/connectors'
+    | '/fpa'
     | '/metrics'
+    | '/fpa/budget'
+    | '/fpa/cashflow'
+    | '/fpa/forecast'
+    | '/fpa/reports'
+    | '/fpa/scenarios'
+    | '/fpa/variance'
+    | '/fpa/workforce'
     | '/metrics/$key'
     | '/metrics/new'
+    | '/fpa/'
     | '/metrics/'
     | '/dashboards/$slug/edit'
     | '/dashboards/$slug/'
@@ -104,8 +193,16 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/connectors'
+    | '/fpa/budget'
+    | '/fpa/cashflow'
+    | '/fpa/forecast'
+    | '/fpa/reports'
+    | '/fpa/scenarios'
+    | '/fpa/variance'
+    | '/fpa/workforce'
     | '/metrics/$key'
     | '/metrics/new'
+    | '/fpa'
     | '/metrics'
     | '/dashboards/$slug/edit'
     | '/dashboards/$slug'
@@ -113,9 +210,18 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/connectors'
+    | '/fpa'
     | '/metrics'
+    | '/fpa/budget'
+    | '/fpa/cashflow'
+    | '/fpa/forecast'
+    | '/fpa/reports'
+    | '/fpa/scenarios'
+    | '/fpa/variance'
+    | '/fpa/workforce'
     | '/metrics/$key'
     | '/metrics/new'
+    | '/fpa/'
     | '/metrics/'
     | '/dashboards/$slug/edit'
     | '/dashboards/$slug/'
@@ -124,6 +230,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ConnectorsRoute: typeof ConnectorsRoute
+  FpaRoute: typeof FpaRouteWithChildren
   MetricsRoute: typeof MetricsRouteWithChildren
   DashboardsSlugEditRoute: typeof DashboardsSlugEditRoute
   DashboardsSlugIndexRoute: typeof DashboardsSlugIndexRoute
@@ -145,12 +252,75 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConnectorsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/fpa': {
+      id: '/fpa'
+      path: '/fpa'
+      fullPath: '/fpa'
+      preLoaderRoute: typeof FpaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/metrics': {
       id: '/metrics'
       path: '/metrics'
       fullPath: '/metrics'
       preLoaderRoute: typeof MetricsRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/fpa/': {
+      id: '/fpa/'
+      path: '/'
+      fullPath: '/fpa/'
+      preLoaderRoute: typeof FpaIndexRouteImport
+      parentRoute: typeof FpaRoute
+    }
+    '/fpa/budget': {
+      id: '/fpa/budget'
+      path: '/budget'
+      fullPath: '/fpa/budget'
+      preLoaderRoute: typeof FpaBudgetRouteImport
+      parentRoute: typeof FpaRoute
+    }
+    '/fpa/cashflow': {
+      id: '/fpa/cashflow'
+      path: '/cashflow'
+      fullPath: '/fpa/cashflow'
+      preLoaderRoute: typeof FpaCashflowRouteImport
+      parentRoute: typeof FpaRoute
+    }
+    '/fpa/forecast': {
+      id: '/fpa/forecast'
+      path: '/forecast'
+      fullPath: '/fpa/forecast'
+      preLoaderRoute: typeof FpaForecastRouteImport
+      parentRoute: typeof FpaRoute
+    }
+    '/fpa/reports': {
+      id: '/fpa/reports'
+      path: '/reports'
+      fullPath: '/fpa/reports'
+      preLoaderRoute: typeof FpaReportsRouteImport
+      parentRoute: typeof FpaRoute
+    }
+    '/fpa/scenarios': {
+      id: '/fpa/scenarios'
+      path: '/scenarios'
+      fullPath: '/fpa/scenarios'
+      preLoaderRoute: typeof FpaScenariosRouteImport
+      parentRoute: typeof FpaRoute
+    }
+    '/fpa/variance': {
+      id: '/fpa/variance'
+      path: '/variance'
+      fullPath: '/fpa/variance'
+      preLoaderRoute: typeof FpaVarianceRouteImport
+      parentRoute: typeof FpaRoute
+    }
+    '/fpa/workforce': {
+      id: '/fpa/workforce'
+      path: '/workforce'
+      fullPath: '/fpa/workforce'
+      preLoaderRoute: typeof FpaWorkforceRouteImport
+      parentRoute: typeof FpaRoute
     }
     '/metrics/': {
       id: '/metrics/'
@@ -190,6 +360,30 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface FpaRouteChildren {
+  FpaBudgetRoute: typeof FpaBudgetRoute
+  FpaCashflowRoute: typeof FpaCashflowRoute
+  FpaForecastRoute: typeof FpaForecastRoute
+  FpaReportsRoute: typeof FpaReportsRoute
+  FpaScenariosRoute: typeof FpaScenariosRoute
+  FpaVarianceRoute: typeof FpaVarianceRoute
+  FpaWorkforceRoute: typeof FpaWorkforceRoute
+  FpaIndexRoute: typeof FpaIndexRoute
+}
+
+const FpaRouteChildren: FpaRouteChildren = {
+  FpaBudgetRoute: FpaBudgetRoute,
+  FpaCashflowRoute: FpaCashflowRoute,
+  FpaForecastRoute: FpaForecastRoute,
+  FpaReportsRoute: FpaReportsRoute,
+  FpaScenariosRoute: FpaScenariosRoute,
+  FpaVarianceRoute: FpaVarianceRoute,
+  FpaWorkforceRoute: FpaWorkforceRoute,
+  FpaIndexRoute: FpaIndexRoute,
+}
+
+const FpaRouteWithChildren = FpaRoute._addFileChildren(FpaRouteChildren)
+
 interface MetricsRouteChildren {
   MetricsKeyRoute: typeof MetricsKeyRoute
   MetricsNewRoute: typeof MetricsNewRoute
@@ -208,6 +402,7 @@ const MetricsRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ConnectorsRoute: ConnectorsRoute,
+  FpaRoute: FpaRouteWithChildren,
   MetricsRoute: MetricsRouteWithChildren,
   DashboardsSlugEditRoute: DashboardsSlugEditRoute,
   DashboardsSlugIndexRoute: DashboardsSlugIndexRoute,
