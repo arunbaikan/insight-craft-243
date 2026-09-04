@@ -4,6 +4,7 @@ import { AppShell } from "@/components/app-shell";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CurrencyControls } from "@/components/dashboard/currency-controls";
+import { PlanDashboardLink, PublishPlanButton } from "@/components/fpa/publish-plan-button";
 import { formatValue } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { fpa, useFpa } from "@/lib/fpa/store";
