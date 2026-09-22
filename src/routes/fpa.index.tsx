@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Area,
   AreaChart,
@@ -83,6 +83,58 @@ function FpaOverview() {
       title="Financial planning & analysis"
       description={`${scenario.name} · next 12 months modelled from your drivers`}
     >
+      <Panel
+        title="How your model fits together"
+        description="Each stage feeds the next — change an input on the left and everything downstream updates."
+        className="mb-4"
+      >
+        <div className="grid gap-3 lg:grid-cols-4">
+          {[
+            {
+              to: "/fpa/budget" as const,
+              step: "1",
+              title: "Build the model",
+              body: "Budget lines, growth drivers and the hiring plan.",
+              stat: `${state.headcount.reduce((a, h) => a + h.count, 0)} planned hires · ${money(s.revenue, true)} revenue`,
+            },
+            {
+              to: "/fpa/statements" as const,
+              step: "2",
+              title: "See the outcome",
+              body: "P&L, cash flow and variance against budget.",
+              stat: `EBITDA ${money(s.ebitda, true)} · ${pct(s.ebitdaMarginPct)} margin`,
+            },
+            {
+              to: "/fpa/scenarios" as const,
+              step: "3",
+              title: "Compare choices",
+              body: "Scenarios and driver sensitivity side by side.",
+              stat: `${state.scenarios.length} scenarios · cash ${money(s.endingCash, true)}`,
+            },
+            {
+              to: "/fpa/board" as const,
+              step: "4",
+              title: "Share the story",
+              body: "Board pack, reports and dashboard publishing.",
+              stat: s.runwayMonths ? `${s.runwayMonths.toFixed(1)} months runway` : "Cash generative",
+            },
+          ].map((card) => (
+            <Link
+              key={card.to}
+              to={card.to}
+              className="group relative rounded-lg border border-border p-4 transition-colors hover:border-brand hover:bg-brand-soft/40"
+            >
+              <span className="flex size-6 items-center justify-center rounded-full bg-brand text-xs font-semibold text-primary-foreground">
+                {card.step}
+              </span>
+              <p className="mt-3 text-sm font-semibold">{card.title}</p>
+              <p className="mt-1 text-xs text-muted-foreground">{card.body}</p>
+              <p className="mt-3 text-xs font-medium tabular-nums text-brand">{card.stat}</p>
+            </Link>
+          ))}
+        </div>
+      </Panel>
+
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <KpiCard label="Forecast revenue (12m)" value={money(s.revenue, true)} sub={`${pct(s.revenueGrowthPct)} growth over the window`} />
         <KpiCard
