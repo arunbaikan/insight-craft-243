@@ -10,19 +10,24 @@ import { cn } from "@/lib/utils";
 import { fpa, useFpa } from "@/lib/fpa/store";
 
 export const FPA_TABS = [
-  { to: "/fpa", label: "Overview" },
-  { to: "/fpa/board", label: "Board pack" },
-  { to: "/fpa/budget", label: "Budget" },
-  { to: "/fpa/forecast", label: "Forecast" },
-  { to: "/fpa/scenarios", label: "Scenarios" },
-  { to: "/fpa/sensitivity", label: "Sensitivity" },
-  { to: "/fpa/variance", label: "Variance" },
-  { to: "/fpa/statements", label: "Statements" },
-  { to: "/fpa/unit-economics", label: "Unit economics" },
-  { to: "/fpa/workforce", label: "Workforce" },
-  { to: "/fpa/cashflow", label: "Cash flow" },
-  { to: "/fpa/reports", label: "Reports" },
+  { to: "/fpa/budget", label: "Budget", group: "Plan & model" },
+  { to: "/fpa/forecast", label: "Forecast", group: "Plan & model" },
+  { to: "/fpa/workforce", label: "Workforce", group: "Plan & model" },
+  { to: "/fpa/scenarios", label: "Scenarios", group: "Plan & model" },
+  { to: "/fpa/statements", label: "Statements", group: "Financials" },
+  { to: "/fpa/cashflow", label: "Cash flow", group: "Financials" },
+  { to: "/fpa/variance", label: "Variance", group: "Financials" },
+  { to: "/fpa", label: "Overview", group: "Executive" },
+  { to: "/fpa/board", label: "Board pack", group: "Executive" },
+  { to: "/fpa/unit-economics", label: "Unit economics", group: "Executive" },
+  { to: "/fpa/sensitivity", label: "Sensitivity", group: "Executive" },
+  { to: "/fpa/reports", label: "Reports", group: "Executive" },
 ] as const;
+
+export const FPA_GROUPS = ["Plan & model", "Financials", "Executive"] as const;
+
+
+
 
 export function money(value: number, compact = false) {
   return formatValue(value, "currency", 0, null, compact);
@@ -74,19 +79,39 @@ export function FpaShell({
         </>
       }
     >
-      <nav className="mb-6 flex flex-wrap gap-1 rounded-lg border border-border bg-card p-1">
-        {FPA_TABS.map((t) => (
-          <Link
-            key={t.to}
-            to={t.to}
-            activeOptions={{ exact: t.to === "/fpa" }}
-            className="rounded-md px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-            activeProps={{ className: "bg-brand-soft text-brand font-medium" }}
-          >
-            {t.label}
-          </Link>
-        ))}
-      </nav>
+      <div className="mb-6 space-y-3">
+        <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-soft px-2.5 py-1 text-xs font-medium text-brand">
+            <span className="h-1.5 w-1.5 rounded-full bg-brand" />
+            Working draft
+          </span>
+          <span className="text-sm font-medium">FY operating model</span>
+          <span className="text-xs text-muted-foreground">
+            Scenario: {state.scenarios.find((s) => s.id === state.activeScenarioId)?.name ?? "—"} · autosaved on this device
+          </span>
+        </div>
+        <nav className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-xl border border-border bg-card p-2">
+          {FPA_GROUPS.map((group) => (
+            <div key={group} className="flex items-center gap-1.5">
+              <span className="px-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70">{group}</span>
+              <div className="flex flex-wrap gap-1">
+                {FPA_TABS.filter((t) => t.group === group).map((t) => (
+                  <Link
+                    key={t.to}
+                    to={t.to}
+                    activeOptions={{ exact: t.to === "/fpa" }}
+                    className="rounded-md px-2.5 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                    activeProps={{ className: "bg-brand-soft text-brand font-medium" }}
+                  >
+                    {t.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ))}
+        </nav>
+      </div>
+
       {children}
     </AppShell>
   );
