@@ -79,19 +79,39 @@ export function FpaShell({
         </>
       }
     >
-      <nav className="mb-6 flex flex-wrap gap-1 rounded-lg border border-border bg-card p-1">
-        {FPA_TABS.map((t) => (
-          <Link
-            key={t.to}
-            to={t.to}
-            activeOptions={{ exact: t.to === "/fpa" }}
-            className="rounded-md px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-            activeProps={{ className: "bg-brand-soft text-brand font-medium" }}
-          >
-            {t.label}
-          </Link>
-        ))}
-      </nav>
+      <div className="mb-6 space-y-3">
+        <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-soft px-2.5 py-1 text-xs font-medium text-brand">
+            <span className="h-1.5 w-1.5 rounded-full bg-brand" />
+            Working draft
+          </span>
+          <span className="text-sm font-medium">FY operating model</span>
+          <span className="text-xs text-muted-foreground">
+            Scenario: {state.scenarios.find((s) => s.id === state.activeScenarioId)?.name ?? "—"} · autosaved on this device
+          </span>
+        </div>
+        <nav className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-xl border border-border bg-card p-2">
+          {FPA_GROUPS.map((group) => (
+            <div key={group} className="flex items-center gap-1.5">
+              <span className="px-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70">{group}</span>
+              <div className="flex flex-wrap gap-1">
+                {FPA_TABS.filter((t) => t.group === group).map((t) => (
+                  <Link
+                    key={t.to}
+                    to={t.to}
+                    activeOptions={{ exact: t.to === "/fpa" }}
+                    className="rounded-md px-2.5 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                    activeProps={{ className: "bg-brand-soft text-brand font-medium" }}
+                  >
+                    {t.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ))}
+        </nav>
+      </div>
+
       {children}
     </AppShell>
   );
