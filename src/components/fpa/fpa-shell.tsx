@@ -9,20 +9,38 @@ import { formatValue } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { fpa, useFpa } from "@/lib/fpa/store";
 
-export const FPA_TABS = [
-  { to: "/fpa", label: "Overview" },
-  { to: "/fpa/board", label: "Board pack" },
-  { to: "/fpa/budget", label: "Budget" },
-  { to: "/fpa/forecast", label: "Forecast" },
-  { to: "/fpa/scenarios", label: "Scenarios" },
-  { to: "/fpa/sensitivity", label: "Sensitivity" },
-  { to: "/fpa/variance", label: "Variance" },
-  { to: "/fpa/statements", label: "Statements" },
-  { to: "/fpa/unit-economics", label: "Unit economics" },
-  { to: "/fpa/workforce", label: "Workforce" },
-  { to: "/fpa/cashflow", label: "Cash flow" },
-  { to: "/fpa/reports", label: "Reports" },
+export const FPA_TAB_GROUPS = [
+  {
+    label: "Plan & model",
+    tabs: [
+      { to: "/fpa/budget", label: "Budget" },
+      { to: "/fpa/forecast", label: "Forecast" },
+      { to: "/fpa/workforce", label: "Workforce" },
+      { to: "/fpa/scenarios", label: "Scenarios" },
+    ],
+  },
+  {
+    label: "Financials",
+    tabs: [
+      { to: "/fpa/statements", label: "Statements" },
+      { to: "/fpa/cashflow", label: "Cash flow" },
+      { to: "/fpa/variance", label: "Variance" },
+    ],
+  },
+  {
+    label: "Executive",
+    tabs: [
+      { to: "/fpa", label: "Overview" },
+      { to: "/fpa/board", label: "Board pack" },
+      { to: "/fpa/unit-economics", label: "Unit economics" },
+      { to: "/fpa/sensitivity", label: "Sensitivity" },
+      { to: "/fpa/reports", label: "Reports" },
+    ],
+  },
 ] as const;
+
+export const FPA_TABS = FPA_TAB_GROUPS.flatMap((g) => g.tabs);
+
 
 export function money(value: number, compact = false) {
   return formatValue(value, "currency", 0, null, compact);
