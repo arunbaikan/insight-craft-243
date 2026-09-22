@@ -9,37 +9,24 @@ import { formatValue } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { fpa, useFpa } from "@/lib/fpa/store";
 
-export const FPA_TAB_GROUPS = [
-  {
-    label: "Plan & model",
-    tabs: [
-      { to: "/fpa/budget", label: "Budget" },
-      { to: "/fpa/forecast", label: "Forecast" },
-      { to: "/fpa/workforce", label: "Workforce" },
-      { to: "/fpa/scenarios", label: "Scenarios" },
-    ],
-  },
-  {
-    label: "Financials",
-    tabs: [
-      { to: "/fpa/statements", label: "Statements" },
-      { to: "/fpa/cashflow", label: "Cash flow" },
-      { to: "/fpa/variance", label: "Variance" },
-    ],
-  },
-  {
-    label: "Executive",
-    tabs: [
-      { to: "/fpa", label: "Overview" },
-      { to: "/fpa/board", label: "Board pack" },
-      { to: "/fpa/unit-economics", label: "Unit economics" },
-      { to: "/fpa/sensitivity", label: "Sensitivity" },
-      { to: "/fpa/reports", label: "Reports" },
-    ],
-  },
+export const FPA_TABS = [
+  { to: "/fpa/budget", label: "Budget", group: "Plan & model" },
+  { to: "/fpa/forecast", label: "Forecast", group: "Plan & model" },
+  { to: "/fpa/workforce", label: "Workforce", group: "Plan & model" },
+  { to: "/fpa/scenarios", label: "Scenarios", group: "Plan & model" },
+  { to: "/fpa/statements", label: "Statements", group: "Financials" },
+  { to: "/fpa/cashflow", label: "Cash flow", group: "Financials" },
+  { to: "/fpa/variance", label: "Variance", group: "Financials" },
+  { to: "/fpa", label: "Overview", group: "Executive" },
+  { to: "/fpa/board", label: "Board pack", group: "Executive" },
+  { to: "/fpa/unit-economics", label: "Unit economics", group: "Executive" },
+  { to: "/fpa/sensitivity", label: "Sensitivity", group: "Executive" },
+  { to: "/fpa/reports", label: "Reports", group: "Executive" },
 ] as const;
 
-export const FPA_TABS = FPA_TAB_GROUPS.flatMap((g) => g.tabs);
+export const FPA_GROUPS = ["Plan & model", "Financials", "Executive"] as const;
+
+
 
 
 export function money(value: number, compact = false) {
