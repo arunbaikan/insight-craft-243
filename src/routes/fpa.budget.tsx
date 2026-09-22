@@ -210,11 +210,14 @@ function BudgetPage() {
                 return (
                   <Fragment key={group}>
                     <tr className="bg-muted/40">
-                      <td className="sticky left-0 z-10 bg-muted/40 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground" colSpan={2}>
+                      <td
+                        className="sticky left-0 z-10 bg-muted/40 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground"
+                        colSpan={buckets.length + 3}
+                      >
                         {group}
                       </td>
-                      <td colSpan={buckets.length + 1} />
                     </tr>
+
                     {lines.map((line) => {
                       const total = buckets.reduce((a, b) => a + sumBucket(state.budget, line.key, b), 0);
                       return (
