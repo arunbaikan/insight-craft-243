@@ -260,12 +260,15 @@ function BudgetPage() {
                         {money(groupTotals.reduce((a, v) => a + v, 0), true)}
                       </td>
                     </tr>
+                    {group === "Cost of sales" ? (
+                      <SummaryRow label="Gross profit" buckets={buckets} pick={(t) => t.grossProfit} budget={state.budget} />
+                    ) : null}
                   </Fragment>
                 );
               })}
 
-              <SummaryRow label="Gross profit" buckets={buckets} pick={(t) => t.grossProfit} budget={state.budget} />
               <SummaryRow label="EBITDA" buckets={buckets} pick={(t) => t.ebitda} budget={state.budget} emphasis />
+
             </tbody>
           </table>
         </div>
