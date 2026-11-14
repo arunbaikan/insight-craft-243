@@ -39,7 +39,7 @@ export async function syncZohoStep() {
   if (!company) throw new Error("Company setup failed");
   const initialized = await db.from("fincommand_sync_resources").upsert(ZOHO_RESOURCES.map(([resource,path,response_key,id_key,detail_key]) => ({company_id:company.id,resource,path,response_key,id_key,detail_key})), {onConflict:"company_id,resource",ignoreDuplicates:true});
   if (initialized.error) throw new Error(initialized.error.message);
-  const state = await db.from("fincommand_sync_resources").select("*").eq("company_id",company.id).in("status",["pending","running"]).order("resource").limit(1).maybeSingle();
+  const state = await db.from("fincommand_sync_resources").select("*").eq("company_id",company.id).in("status",["pending","running"]).order("phase",{ascending:false}).order("resource").limit(1).maybeSingle();
   if (state.error) throw new Error(state.error.message);
   const task = state.data;
   if (!task) {
