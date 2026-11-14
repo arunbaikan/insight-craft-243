@@ -1,0 +1,20 @@
+{
+  "source": "FinCommand_krishna_manohar.zip",
+  "scope": "Backend only; preserve the existing Lovable frontend",
+  "capabilities": [
+    {"capability":"Financial engines", "source":"fincommand-pro/lib/financial", "outcome":"Import the newer TypeScript engine, not the older demo calculations", "status":"in_progress", "next_action":"Run source regression tests"},
+    {"capability":"Schema", "source":"fincommand-pro/db/schema.sql", "outcome":"migrate", "status":"in_progress", "next_action":"Apply namespaced Cloud schema with company-scoped permissions"},
+    {"capability":"Records", "source":"PostgreSQL/Neon", "outcome":"migrate", "status":"pending", "next_action":"Supply CSV or JSON application-table exports; diagnostic files are not a record export"},
+    {"capability":"Auth identities", "source":"Custom JWT and users", "outcome":"migrate", "status":"pending", "next_action":"Supply user export with original IDs and emails; implement verified-email identity linking and first-login password setup"},
+    {"capability":"Authorization", "source":"Company and role permissions", "outcome":"Server-controlled membership boundaries", "status":"in_progress", "next_action":"Test member versus nonmember access"},
+    {"capability":"Uploaded file bytes", "source":"Excel uploads/local filesystem", "outcome":"Cloud storage", "status":"pending", "next_action":"Supply original upload files and implement private upload/parser flow"},
+    {"capability":"Zoho OAuth and sync", "source":"lib/services/zoho.ts", "outcome":"Preserve Zoho provider", "status":"pending", "next_action":"Port fetch-based sync and signed OAuth state; request existing provider keys securely before live verification"},
+    {"capability":"Public endpoints and callbacks", "source":"Express and Next API v1", "outcome":"Preserve external caller contracts", "status":"pending", "next_action":"Port API adapters and configure Zoho callback URL cutover"},
+    {"capability":"Schedules", "source":"Zoho cron", "outcome":"Authenticated scheduled trigger", "status":"pending", "next_action":"Replace node-cron with a hosted scheduler and verify caller secret"},
+    {"capability":"Custom report configuration", "source":"Report templates/lines/saved reports", "outcome":"Cloud schema and portable report engine", "status":"in_progress", "next_action":"Wire configuration CRUD and execution"},
+    {"capability":"External providers", "source":"Zoho Books and FX rate service", "outcome":"Preserve providers", "status":"pending", "next_action":"Verify retained providers after secure configuration"},
+    {"capability":"Secrets", "source":"Environment variable names", "outcome":"Never import credentials from archive", "status":"pending", "next_action":"Use secure secret form immediately before provider verification"},
+    {"capability":"Frontend integration", "source":"Existing metric builder and dashboard viewer", "outcome":"Keep presentation; add company-scoped financial sources", "status":"in_progress", "next_action":"Connect source catalogue and authenticated queries"},
+    {"capability":"Cutover and verification", "source":"Original running backend", "outcome":"No production cutover yet", "status":"pending", "next_action":"Verify imported records, identity mapping, CRUD, dashboards and provider callbacks"}
+  ]
+}
