@@ -2,7 +2,8 @@
 
 - [x] Organize accessible Real Variable Zoho history into private company-scoped originals, normalized documents and lines, with resumable import tracking; 2,778 source records stored and conversions tested.
 - [ ] Finish remaining expense detail retrieval — paused at saved cursor; source document lists are fully paginated, provider quota and remaining calls need checking before continuation.
-- [ ] Retry accounts and financial reports — reconnect requested with ZohoBooks.accountants.READ and ZohoBooks.reports.READ on 2026-11-14; tool refused because the connector does not offer these scopes, and no prompt appeared. Existing authorization is unchanged; imports await a supported authorization path.
+- [ ] Configure the user's own Zoho OAuth app — user confirmed Client ID and Client Secret are available; collect securely, then complete full-access authorization before changing ingestion.
+- [ ] Retry accounts and financial reports — built-in connector cannot request ZohoBooks.accountants.READ and ZohoBooks.reports.READ; pending authorization through the user's own Zoho app.
 
 - [ ] Connect Real Variable Digital Assetservices records and completed Zoho integration to the Lovable frontend — Zoho linked; 2,778 source records stored privately; blocked by financial-report authorization and company-user membership provisioning (no auth users exist).
 
