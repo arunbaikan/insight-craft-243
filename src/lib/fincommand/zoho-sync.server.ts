@@ -27,11 +27,11 @@ export async function syncZohoStep() {
   if (companyResult.error) throw new Error(companyResult.error.message);
   if (!companyResult.data) {
     const orgs = await zoho("/organizations");
-    const org = orgs.organizations.find((o: ZohoRow) => o.organization_id === ORGANIZATION_ID);
+    const org = orgs.organizations.find((o: ZohoRow) => o["organization_id"] === ORGANIZATION_ID);
     if (!org) throw new Error("Configured Zoho organization is unavailable");
     // Zoho fiscal_year_start_month is zero-based (3 = April).
-    const created = await db.from("fincommand_companies").upsert({ name:org.name, currency:org.currency_code,
-      fiscal_year_start:Number(org.fiscal_year_start_month) + 1, zoho_organization_id:ORGANIZATION_ID }, {onConflict:"zoho_organization_id"}).select("id,currency").single();
+    const created = await db.from("fincommand_companies").insert({ name:org.name, currency:org.currency_code,
+      fiscal_year_start:Number(org.fiscal_year_start_month) + 1, zoho_organization_id:ORGANIZATION_ID }).select("id,currency").single();
     if (created.error) throw new Error(created.error.message);
     companyResult = created;
   }
