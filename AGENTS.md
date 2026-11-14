@@ -14,3 +14,5 @@
 - Keep imported financial calculations in `src/lib/fincommand` and use the newer source engine rather than the legacy demo engine, preserving tested report behavior.
 - Namespace imported financial tables with `fincommand_` and enforce server-controlled company memberships, avoiding collisions with the existing dashboard schema.
 - Use request-scoped RLS clients with bearer forwarding for imported data; never cache a session-bearing client across users or grant anonymous financial-data access.
+- Keep Zoho ingestion resumable per resource with immutable raw snapshots, source-keyed current records and separate documents/lines; source FX and unavailable values must survive normalization so future reports can be reprocessed without fabricating accounting journals.
+- Use the server-held scheduler credential only for the privileged ingestion route; company membership is provisioned by administrators, never by a browser-provided organization ID or user-editable metadata.

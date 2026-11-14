@@ -1,6 +1,10 @@
 # Roadmap
 
-- [ ] Connect Real Variable Digital Assetservices records and completed Zoho integration to the Lovable frontend — Zoho linked; app credentials and invoice read verified; blocked by financial-report authorization and missing original record/user exports (Cloud currently empty)
+- [x] Organize accessible Real Variable Zoho history into private company-scoped originals, normalized documents and lines, with resumable import tracking; 2,778 source records stored and conversions tested.
+- [ ] Finish remaining expense detail retrieval — paused at saved cursor; source document lists are fully paginated, provider quota and remaining calls need checking before continuation.
+- [ ] Retry accounts and financial reports — retried 2026-11-14; Zoho denies accounts, P&L and balance sheet with HTTP 401/code 57. Requires provider authorization unavailable in the current connection's granted scopes.
+
+- [ ] Connect Real Variable Digital Assetservices records and completed Zoho integration to the Lovable frontend — Zoho linked; 2,778 source records stored privately; blocked by financial-report authorization and company-user membership provisioning (no auth users exist).
 
 - [x] FinCommand foundation: portable financial engines, protected company/year/trial-balance schema, source catalogue and authenticated report reader (live data still pending)
 - [ ] FinCommand production migration — pending record/user exports, sign-in mapping, uploads, Zoho configuration, external endpoint cutover and live verification

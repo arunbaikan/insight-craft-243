@@ -28,6 +28,7 @@ import { Route as FpaWorkforceRouteImport } from './routes/fpa.workforce'
 import { Route as MetricsIndexRouteImport } from './routes/metrics.index'
 import { Route as MetricsKeyRouteImport } from './routes/metrics.$key'
 import { Route as MetricsNewRouteImport } from './routes/metrics.new'
+import { Route as ApiPublicZohoSyncRouteImport } from './routes/api/public/zoho-sync'
 import { Route as DashboardsSlugIndexRouteImport } from './routes/dashboards.$slug.index'
 import { Route as DashboardsSlugEditRouteImport } from './routes/dashboards.$slug.edit'
 
@@ -126,6 +127,11 @@ const MetricsNewRoute = MetricsNewRouteImport.update({
   path: '/new',
   getParentRoute: () => MetricsRoute,
 } as any)
+const ApiPublicZohoSyncRoute = ApiPublicZohoSyncRouteImport.update({
+  id: '/api/public/zoho-sync',
+  path: '/api/public/zoho-sync',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardsSlugIndexRoute = DashboardsSlugIndexRouteImport.update({
   id: '/dashboards/$slug/',
   path: '/dashboards/$slug/',
@@ -157,6 +163,7 @@ export interface FileRoutesByFullPath {
   '/metrics/new': typeof MetricsNewRoute
   '/fpa/': typeof FpaIndexRoute
   '/metrics/': typeof MetricsIndexRoute
+  '/api/public/zoho-sync': typeof ApiPublicZohoSyncRoute
   '/dashboards/$slug/edit': typeof DashboardsSlugEditRoute
   '/dashboards/$slug/': typeof DashboardsSlugIndexRoute
 }
@@ -178,6 +185,7 @@ export interface FileRoutesByTo {
   '/metrics/new': typeof MetricsNewRoute
   '/fpa': typeof FpaIndexRoute
   '/metrics': typeof MetricsIndexRoute
+  '/api/public/zoho-sync': typeof ApiPublicZohoSyncRoute
   '/dashboards/$slug/edit': typeof DashboardsSlugEditRoute
   '/dashboards/$slug': typeof DashboardsSlugIndexRoute
 }
@@ -202,6 +210,7 @@ export interface FileRoutesById {
   '/metrics/new': typeof MetricsNewRoute
   '/fpa/': typeof FpaIndexRoute
   '/metrics/': typeof MetricsIndexRoute
+  '/api/public/zoho-sync': typeof ApiPublicZohoSyncRoute
   '/dashboards/$slug/edit': typeof DashboardsSlugEditRoute
   '/dashboards/$slug/': typeof DashboardsSlugIndexRoute
 }
@@ -227,6 +236,7 @@ export interface FileRouteTypes {
     | '/metrics/new'
     | '/fpa/'
     | '/metrics/'
+    | '/api/public/zoho-sync'
     | '/dashboards/$slug/edit'
     | '/dashboards/$slug/'
   fileRoutesByTo: FileRoutesByTo
@@ -248,6 +258,7 @@ export interface FileRouteTypes {
     | '/metrics/new'
     | '/fpa'
     | '/metrics'
+    | '/api/public/zoho-sync'
     | '/dashboards/$slug/edit'
     | '/dashboards/$slug'
   id:
@@ -271,6 +282,7 @@ export interface FileRouteTypes {
     | '/metrics/new'
     | '/fpa/'
     | '/metrics/'
+    | '/api/public/zoho-sync'
     | '/dashboards/$slug/edit'
     | '/dashboards/$slug/'
   fileRoutesById: FileRoutesById
@@ -280,6 +292,7 @@ export interface RootRouteChildren {
   ConnectorsRoute: typeof ConnectorsRoute
   FpaRoute: typeof FpaRouteWithChildren
   MetricsRoute: typeof MetricsRouteWithChildren
+  ApiPublicZohoSyncRoute: typeof ApiPublicZohoSyncRoute
   DashboardsSlugEditRoute: typeof DashboardsSlugEditRoute
   DashboardsSlugIndexRoute: typeof DashboardsSlugIndexRoute
 }
@@ -419,6 +432,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MetricsNewRouteImport
       parentRoute: typeof MetricsRoute
     }
+    '/api/public/zoho-sync': {
+      id: '/api/public/zoho-sync'
+      path: '/api/public/zoho-sync'
+      fullPath: '/api/public/zoho-sync'
+      preLoaderRoute: typeof ApiPublicZohoSyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboards/$slug/': {
       id: '/dashboards/$slug/'
       path: '/dashboards/$slug'
@@ -488,6 +508,7 @@ const rootRouteChildren: RootRouteChildren = {
   ConnectorsRoute: ConnectorsRoute,
   FpaRoute: FpaRouteWithChildren,
   MetricsRoute: MetricsRouteWithChildren,
+  ApiPublicZohoSyncRoute: ApiPublicZohoSyncRoute,
   DashboardsSlugEditRoute: DashboardsSlugEditRoute,
   DashboardsSlugIndexRoute: DashboardsSlugIndexRoute,
 }

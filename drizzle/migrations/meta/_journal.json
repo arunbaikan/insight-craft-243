@@ -15,6 +15,13 @@
       "when": 1794639588939,
       "tag": "0001_fincommand_explicit_privileges",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794641954711,
+      "tag": "0002_zoho_organized_ingestion",
+      "breakpoints": true
     }
   ]
 }
