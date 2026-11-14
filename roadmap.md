@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Organize Real Variable Zoho history into private company-scoped original records, normalized documents and lines, and resumable import tracking; verify accessible data and explicitly record blocked resources.
+
 - [ ] Connect Real Variable Digital Assetservices records and completed Zoho integration to the Lovable frontend — Zoho linked; app credentials and invoice read verified; blocked by financial-report authorization and missing original record/user exports (Cloud currently empty)
 
 - [x] FinCommand foundation: portable financial engines, protected company/year/trial-balance schema, source catalogue and authenticated report reader (live data still pending)
