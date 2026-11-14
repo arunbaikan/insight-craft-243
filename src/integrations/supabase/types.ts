@@ -603,6 +603,7 @@ export type Database = {
           registered_address: string | null
           reporting_standard: string
           updated_at: string
+          zoho_organization_id: string | null
         }
         Insert: {
           cin?: string | null
@@ -620,6 +621,7 @@ export type Database = {
           registered_address?: string | null
           reporting_standard?: string
           updated_at?: string
+          zoho_organization_id?: string | null
         }
         Update: {
           cin?: string | null
@@ -637,8 +639,155 @@ export type Database = {
           registered_address?: string | null
           reporting_standard?: string
           updated_at?: string
+          zoho_organization_id?: string | null
         }
         Relationships: []
+      }
+      fincommand_document_lines: {
+        Row: {
+          account_id: string | null
+          amount: number | null
+          company_id: string
+          description: string | null
+          item_id: string | null
+          line_id: string
+          payload: Json
+          project_id: string | null
+          quantity: number | null
+          rate: number | null
+          resource: string
+          source_id: string
+          tax_id: string | null
+        }
+        Insert: {
+          account_id?: string | null
+          amount?: number | null
+          company_id: string
+          description?: string | null
+          item_id?: string | null
+          line_id: string
+          payload: Json
+          project_id?: string | null
+          quantity?: number | null
+          rate?: number | null
+          resource: string
+          source_id: string
+          tax_id?: string | null
+        }
+        Update: {
+          account_id?: string | null
+          amount?: number | null
+          company_id?: string
+          description?: string | null
+          item_id?: string | null
+          line_id?: string
+          payload?: Json
+          project_id?: string | null
+          quantity?: number | null
+          rate?: number | null
+          resource?: string
+          source_id?: string
+          tax_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fincommand_document_lines_company_id_resource_source_id_fkey"
+            columns: ["company_id", "resource", "source_id"]
+            isOneToOne: false
+            referencedRelation: "fincommand_source_records"
+            referencedColumns: ["company_id", "resource", "source_id"]
+          },
+        ]
+      }
+      fincommand_documents: {
+        Row: {
+          balance_base: number | null
+          balance_due: number | null
+          base_currency: string
+          company_id: string
+          currency: string | null
+          document_date: string | null
+          document_number: string | null
+          due_date: string | null
+          exchange_rate: number | null
+          fetched_at: string
+          location_id: string | null
+          normalization_issues: Json
+          party_name: string | null
+          party_source_id: string | null
+          project_id: string | null
+          resource: string
+          source_id: string
+          status: string | null
+          subtotal: number | null
+          tax_total: number | null
+          total: number | null
+          total_base: number | null
+        }
+        Insert: {
+          balance_base?: number | null
+          balance_due?: number | null
+          base_currency: string
+          company_id: string
+          currency?: string | null
+          document_date?: string | null
+          document_number?: string | null
+          due_date?: string | null
+          exchange_rate?: number | null
+          fetched_at?: string
+          location_id?: string | null
+          normalization_issues?: Json
+          party_name?: string | null
+          party_source_id?: string | null
+          project_id?: string | null
+          resource: string
+          source_id: string
+          status?: string | null
+          subtotal?: number | null
+          tax_total?: number | null
+          total?: number | null
+          total_base?: number | null
+        }
+        Update: {
+          balance_base?: number | null
+          balance_due?: number | null
+          base_currency?: string
+          company_id?: string
+          currency?: string | null
+          document_date?: string | null
+          document_number?: string | null
+          due_date?: string | null
+          exchange_rate?: number | null
+          fetched_at?: string
+          location_id?: string | null
+          normalization_issues?: Json
+          party_name?: string | null
+          party_source_id?: string | null
+          project_id?: string | null
+          resource?: string
+          source_id?: string
+          status?: string | null
+          subtotal?: number | null
+          tax_total?: number | null
+          total?: number | null
+          total_base?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fincommand_documents_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "fincommand_companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fincommand_documents_company_id_resource_source_id_fkey"
+            columns: ["company_id", "resource", "source_id"]
+            isOneToOne: true
+            referencedRelation: "fincommand_source_records"
+            referencedColumns: ["company_id", "resource", "source_id"]
+          },
+        ]
       }
       fincommand_financial_years: {
         Row: {
@@ -693,6 +842,47 @@ export type Database = {
           },
         ]
       }
+      fincommand_masters: {
+        Row: {
+          company_id: string
+          currency: string | null
+          kind: string | null
+          name: string | null
+          payload: Json
+          resource: string
+          source_id: string
+          status: string | null
+        }
+        Insert: {
+          company_id: string
+          currency?: string | null
+          kind?: string | null
+          name?: string | null
+          payload: Json
+          resource: string
+          source_id: string
+          status?: string | null
+        }
+        Update: {
+          company_id?: string
+          currency?: string | null
+          kind?: string | null
+          name?: string | null
+          payload?: Json
+          resource?: string
+          source_id?: string
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fincommand_masters_company_id_resource_source_id_fkey"
+            columns: ["company_id", "resource", "source_id"]
+            isOneToOne: true
+            referencedRelation: "fincommand_source_records"
+            referencedColumns: ["company_id", "resource", "source_id"]
+          },
+        ]
+      }
       fincommand_memberships: {
         Row: {
           company_id: string
@@ -727,6 +917,141 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "fincommand_memberships_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "fincommand_companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fincommand_source_records: {
+        Row: {
+          company_id: string
+          detail_complete: boolean
+          fetched_at: string
+          payload: Json
+          resource: string
+          source_id: string
+          source_modified_at: string | null
+        }
+        Insert: {
+          company_id: string
+          detail_complete?: boolean
+          fetched_at?: string
+          payload: Json
+          resource: string
+          source_id: string
+          source_modified_at?: string | null
+        }
+        Update: {
+          company_id?: string
+          detail_complete?: boolean
+          fetched_at?: string
+          payload?: Json
+          resource?: string
+          source_id?: string
+          source_modified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fincommand_source_records_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "fincommand_companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fincommand_source_snapshots: {
+        Row: {
+          company_id: string
+          fetched_at: string
+          id: string
+          page: number | null
+          payload: Json
+          request_path: string
+          resource: string
+        }
+        Insert: {
+          company_id: string
+          fetched_at?: string
+          id?: string
+          page?: number | null
+          payload: Json
+          request_path: string
+          resource: string
+        }
+        Update: {
+          company_id?: string
+          fetched_at?: string
+          id?: string
+          page?: number | null
+          payload?: Json
+          request_path?: string
+          resource?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fincommand_source_snapshots_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "fincommand_companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fincommand_sync_resources: {
+        Row: {
+          company_id: string
+          detail_cursor: string | null
+          detail_key: string | null
+          http_status: number | null
+          id_key: string
+          last_error: string | null
+          page: number
+          path: string
+          phase: string
+          records_pulled: number
+          resource: string
+          response_key: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          detail_cursor?: string | null
+          detail_key?: string | null
+          http_status?: number | null
+          id_key: string
+          last_error?: string | null
+          page?: number
+          path: string
+          phase?: string
+          records_pulled?: number
+          resource: string
+          response_key: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          detail_cursor?: string | null
+          detail_key?: string | null
+          http_status?: number | null
+          id_key?: string
+          last_error?: string | null
+          page?: number
+          path?: string
+          phase?: string
+          records_pulled?: number
+          resource?: string
+          response_key?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fincommand_sync_resources_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "fincommand_companies"
@@ -1519,6 +1844,21 @@ export type Database = {
       fincommand_can_read_company: {
         Args: { target_company: string }
         Returns: boolean
+      }
+      fincommand_store_zoho_batch: {
+        Args: {
+          p_company: string
+          p_detail: boolean
+          p_documents: Json
+          p_lines: Json
+          p_masters: Json
+          p_page: number
+          p_path: string
+          p_records: Json
+          p_resource: string
+          p_snapshot: Json
+        }
+        Returns: undefined
       }
     }
     Enums: {
