@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.5"
+    PostgrestVersion: "14.17"
   }
   public: {
     Tables: {
@@ -586,6 +586,385 @@ export type Database = {
         }
         Relationships: []
       }
+      fincommand_companies: {
+        Row: {
+          cin: string | null
+          created_at: string
+          currency: string
+          date_of_incorporation: string | null
+          fiscal_year_start: number
+          gstin: string | null
+          id: string
+          is_active: boolean
+          logo_url: string | null
+          name: string
+          pan: string | null
+          presentation_currency: string | null
+          registered_address: string | null
+          reporting_standard: string
+          updated_at: string
+        }
+        Insert: {
+          cin?: string | null
+          created_at?: string
+          currency?: string
+          date_of_incorporation?: string | null
+          fiscal_year_start?: number
+          gstin?: string | null
+          id?: string
+          is_active?: boolean
+          logo_url?: string | null
+          name: string
+          pan?: string | null
+          presentation_currency?: string | null
+          registered_address?: string | null
+          reporting_standard?: string
+          updated_at?: string
+        }
+        Update: {
+          cin?: string | null
+          created_at?: string
+          currency?: string
+          date_of_incorporation?: string | null
+          fiscal_year_start?: number
+          gstin?: string | null
+          id?: string
+          is_active?: boolean
+          logo_url?: string | null
+          name?: string
+          pan?: string | null
+          presentation_currency?: string | null
+          registered_address?: string | null
+          reporting_standard?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      fincommand_financial_years: {
+        Row: {
+          company_id: string
+          created_at: string
+          end_date: string
+          id: string
+          is_locked: boolean
+          label: string
+          locked_at: string | null
+          locked_by: string | null
+          notes: string | null
+          short_label: string | null
+          start_date: string
+          year_type: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          end_date: string
+          id?: string
+          is_locked?: boolean
+          label: string
+          locked_at?: string | null
+          locked_by?: string | null
+          notes?: string | null
+          short_label?: string | null
+          start_date: string
+          year_type?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          end_date?: string
+          id?: string
+          is_locked?: boolean
+          label?: string
+          locked_at?: string | null
+          locked_by?: string | null
+          notes?: string | null
+          short_label?: string | null
+          start_date?: string
+          year_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fincommand_financial_years_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "fincommand_companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fincommand_memberships: {
+        Row: {
+          company_id: string
+          created_at: string
+          id: string
+          is_active: boolean
+          permissions: Json
+          role: string
+          source_user_id: string | null
+          user_id: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          permissions?: Json
+          role: string
+          source_user_id?: string | null
+          user_id: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          permissions?: Json
+          role?: string
+          source_user_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fincommand_memberships_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "fincommand_companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fincommand_tb_ledgers: {
+        Row: {
+          company_id: string
+          created_at: string
+          depth: number
+          financial_year_id: string
+          id: string
+          is_child_present: boolean
+          ledger_code: string | null
+          ledger_name: string
+          m1_cr: number
+          m1_dr: number
+          m10_cr: number
+          m10_dr: number
+          m11_cr: number
+          m11_dr: number
+          m12_cr: number
+          m12_dr: number
+          m2_cr: number
+          m2_dr: number
+          m3_cr: number
+          m3_dr: number
+          m4_cr: number
+          m4_dr: number
+          m5_cr: number
+          m5_dr: number
+          m6_cr: number
+          m6_dr: number
+          m7_cr: number
+          m7_dr: number
+          m8_cr: number
+          m8_dr: number
+          m9_cr: number
+          m9_dr: number
+          normal_bal: string
+          note_name: string | null
+          note_no: number | null
+          op_cr: number
+          op_dr: number
+          section: string | null
+          treasury_type: string | null
+          upload_id: string
+          zoho_account_id: string | null
+          zoho_account_type: string | null
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          depth?: number
+          financial_year_id: string
+          id?: string
+          is_child_present?: boolean
+          ledger_code?: string | null
+          ledger_name: string
+          m1_cr?: number
+          m1_dr?: number
+          m10_cr?: number
+          m10_dr?: number
+          m11_cr?: number
+          m11_dr?: number
+          m12_cr?: number
+          m12_dr?: number
+          m2_cr?: number
+          m2_dr?: number
+          m3_cr?: number
+          m3_dr?: number
+          m4_cr?: number
+          m4_dr?: number
+          m5_cr?: number
+          m5_dr?: number
+          m6_cr?: number
+          m6_dr?: number
+          m7_cr?: number
+          m7_dr?: number
+          m8_cr?: number
+          m8_dr?: number
+          m9_cr?: number
+          m9_dr?: number
+          normal_bal?: string
+          note_name?: string | null
+          note_no?: number | null
+          op_cr?: number
+          op_dr?: number
+          section?: string | null
+          treasury_type?: string | null
+          upload_id: string
+          zoho_account_id?: string | null
+          zoho_account_type?: string | null
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          depth?: number
+          financial_year_id?: string
+          id?: string
+          is_child_present?: boolean
+          ledger_code?: string | null
+          ledger_name?: string
+          m1_cr?: number
+          m1_dr?: number
+          m10_cr?: number
+          m10_dr?: number
+          m11_cr?: number
+          m11_dr?: number
+          m12_cr?: number
+          m12_dr?: number
+          m2_cr?: number
+          m2_dr?: number
+          m3_cr?: number
+          m3_dr?: number
+          m4_cr?: number
+          m4_dr?: number
+          m5_cr?: number
+          m5_dr?: number
+          m6_cr?: number
+          m6_dr?: number
+          m7_cr?: number
+          m7_dr?: number
+          m8_cr?: number
+          m8_dr?: number
+          m9_cr?: number
+          m9_dr?: number
+          normal_bal?: string
+          note_name?: string | null
+          note_no?: number | null
+          op_cr?: number
+          op_dr?: number
+          section?: string | null
+          treasury_type?: string | null
+          upload_id?: string
+          zoho_account_id?: string | null
+          zoho_account_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fincommand_tb_ledgers_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "fincommand_companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fincommand_tb_ledgers_upload_id_company_id_financial_year__fkey"
+            columns: ["upload_id", "company_id", "financial_year_id"]
+            isOneToOne: false
+            referencedRelation: "fincommand_tb_uploads"
+            referencedColumns: ["id", "company_id", "financial_year_id"]
+          },
+        ]
+      }
+      fincommand_tb_uploads: {
+        Row: {
+          company_id: string
+          coverage_pct: number | null
+          error_message: string | null
+          file_size_kb: number | null
+          filename: string | null
+          financial_year_id: string
+          has_monthly_cols: boolean
+          id: string
+          is_current: boolean
+          ledger_count: number
+          mapped_count: number
+          raw_zoho_months: Json | null
+          source: string
+          status: string
+          storage_path: string | null
+          unmatched_count: number
+          unmatched_ledgers: Json
+          uploaded_at: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          company_id: string
+          coverage_pct?: number | null
+          error_message?: string | null
+          file_size_kb?: number | null
+          filename?: string | null
+          financial_year_id: string
+          has_monthly_cols?: boolean
+          id?: string
+          is_current?: boolean
+          ledger_count?: number
+          mapped_count?: number
+          raw_zoho_months?: Json | null
+          source?: string
+          status?: string
+          storage_path?: string | null
+          unmatched_count?: number
+          unmatched_ledgers?: Json
+          uploaded_at?: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          company_id?: string
+          coverage_pct?: number | null
+          error_message?: string | null
+          file_size_kb?: number | null
+          filename?: string | null
+          financial_year_id?: string
+          has_monthly_cols?: boolean
+          id?: string
+          is_current?: boolean
+          ledger_count?: number
+          mapped_count?: number
+          raw_zoho_months?: Json | null
+          source?: string
+          status?: string
+          storage_path?: string | null
+          unmatched_count?: number
+          unmatched_ledgers?: Json
+          uploaded_at?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fincommand_tb_uploads_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "fincommand_companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fincommand_tb_uploads_financial_year_id_company_id_fkey"
+            columns: ["financial_year_id", "company_id"]
+            isOneToOne: false
+            referencedRelation: "fincommand_financial_years"
+            referencedColumns: ["id", "company_id"]
+          },
+        ]
+      }
       invoices: {
         Row: {
           amount_base: number
@@ -1098,10 +1477,49 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      fincommand_monthly_ledgers: {
+        Row: {
+          amount_base: number | null
+          closing_balance_base: number | null
+          company_id: string | null
+          credit: number | null
+          debit: number | null
+          financial_year_id: string | null
+          id: string | null
+          ledger_code: string | null
+          ledger_name: string | null
+          month_date: string | null
+          month_index: number | null
+          normal_bal: string | null
+          note_name: string | null
+          note_no: number | null
+          section: string | null
+          treasury_type: string | null
+          upload_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fincommand_tb_ledgers_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "fincommand_companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fincommand_tb_ledgers_upload_id_company_id_financial_year__fkey"
+            columns: ["upload_id", "company_id", "financial_year_id"]
+            isOneToOne: false
+            referencedRelation: "fincommand_tb_uploads"
+            referencedColumns: ["id", "company_id", "financial_year_id"]
+          },
+        ]
+      }
     }
     Functions: {
-      [_ in never]: never
+      fincommand_can_read_company: {
+        Args: { target_company: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never

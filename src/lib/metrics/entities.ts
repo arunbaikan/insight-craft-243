@@ -8,6 +8,12 @@ export type EntityConfig = {
 };
 
 export const ENTITY_CONFIG: Record<string, EntityConfig> = {
+  fincommand_monthly_ledgers: {
+    table: "fincommand_monthly_ledgers",
+    dateField: "month_date",
+    snapshot: true,
+    columns: "month_date,amount_base,closing_balance_base,debit,credit,company_id,financial_year_id,ledger_name,ledger_code,section,note_no,note_name,treasury_type,normal_bal",
+  },
   journal_lines: {
     table: "journal_lines",
     dateField: "txn_date",

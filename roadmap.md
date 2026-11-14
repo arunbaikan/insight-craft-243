@@ -1,5 +1,8 @@
 # Roadmap
 
+- [x] FinCommand foundation: portable financial engines, protected company/year/trial-balance schema, source catalogue and authenticated report reader (live data still pending)
+- [ ] FinCommand production migration — pending record/user exports, sign-in mapping, uploads, Zoho configuration, external endpoint cutover and live verification
+
 - [x] Phase 1 — canonical schema + demo seed data
 - [x] Phase 4 — metric engine (filter DSL, formula AST, periods)
 - [x] Phase 5 — metric builder UI
