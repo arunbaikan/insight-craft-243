@@ -1,0 +1,4 @@
+REVOKE ALL ON public.fincommand_companies, public.fincommand_memberships, public.fincommand_financial_years, public.fincommand_tb_uploads, public.fincommand_tb_ledgers, public.fincommand_monthly_ledgers FROM anon;
+REVOKE INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER ON public.fincommand_companies, public.fincommand_memberships, public.fincommand_financial_years, public.fincommand_tb_uploads, public.fincommand_tb_ledgers FROM authenticated;
+REVOKE INSERT, UPDATE, DELETE ON public.fincommand_monthly_ledgers FROM authenticated;
+COMMENT ON TABLE public.fincommand_memberships IS 'Server-controlled role and source-user identity mapping. Clients may read their own memberships but cannot create or change them. Imported profiles are not authentication accounts.';
