@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Connect existing FinCommand records and completed Zoho integration to the Lovable frontend — inspect source, verify available data and connection, then wire live reads and sync
+- [ ] Connect existing FinCommand records and completed Zoho integration to the Lovable frontend — Zoho linked and organizations verified; blocked by organization selection, report authorization, and missing original record/user exports (Cloud currently empty)
 
 - [x] FinCommand foundation: portable financial engines, protected company/year/trial-balance schema, source catalogue and authenticated report reader (live data still pending)
 - [ ] FinCommand production migration — pending record/user exports, sign-in mapping, uploads, Zoho configuration, external endpoint cutover and live verification
