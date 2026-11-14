@@ -39,7 +39,7 @@ export async function syncZohoStep() {
   if (!company) throw new Error("Company setup failed");
   const initialized = await db.from("fincommand_sync_resources").upsert(ZOHO_RESOURCES.map(([resource,path,response_key,id_key,detail_key]) => ({company_id:company.id,resource,path,response_key,id_key,detail_key})), {onConflict:"company_id,resource",ignoreDuplicates:true});
   if (initialized.error) throw new Error(initialized.error.message);
-  const state = await db.from("fincommand_sync_resources").select("*").eq("company_id",company.id).in("status",["pending","running"]).order("phase",{ascending:false}).order("resource").limit(1).maybeSingle();
+  const state = await db.from("fincommand_sync_resources").select("*").eq("company_id",company.id).in("status",["pending","running"]).order("phase",{ascending:false}).order("records_pulled").order("resource").limit(1).maybeSingle();
   if (state.error) throw new Error(state.error.message);
   const task = state.data;
   if (!task) {
@@ -55,18 +55,23 @@ export async function syncZohoStep() {
     let nextStatus = "running";
     let nextPage = task.page;
     if (task.phase === "details") {
-      const pending = await db.from("fincommand_source_records").select("source_id").eq("company_id",company.id).eq("resource",task.resource).eq("detail_complete",false).order("source_id").limit(1).maybeSingle();
+      const pending = await db.from("fincommand_source_records").select("source_id").eq("company_id",company.id).eq("resource",task.resource).eq("detail_complete",false).order("source_id").limit(6);
       if (pending.error) throw new Error(pending.error.message);
-      if (!pending.data) {
+      if (!pending.data?.length) {
         const updated = await db.from("fincommand_sync_resources").update({status:"complete",updated_at:new Date().toISOString()}).eq("company_id",company.id).eq("resource",task.resource);
         if(updated.error) throw new Error(updated.error.message);
         return {done:false,resource:task.resource,status:"complete"};
       }
-      path = `${task.path}/${encodeURIComponent(pending.data.source_id)}`;
-      snapshot = await zoho(path,{organization_id:ORGANIZATION_ID});
-      const detail = task.detail_key ? snapshot[task.detail_key] : null;
-      if (!detail || typeof detail !== "object") throw new Error("Zoho detail response is missing the expected record");
-      rows = [detail];
+      const responses = await Promise.all(pending.data.map(async (record) => {
+        const requestPath = `${task.path}/${encodeURIComponent(record.source_id)}`;
+        return {path:requestPath,payload:await zoho(requestPath,{organization_id:ORGANIZATION_ID})};
+      }));
+      snapshot = {responses};
+      rows = responses.map((response) => {
+        const detail = task.detail_key ? response.payload[task.detail_key] : null;
+        if (!detail || typeof detail !== "object") throw new Error("Zoho detail response is missing the expected record");
+        return detail as ZohoRow;
+      });
     } else {
       snapshot = await zoho(path,{organization_id:ORGANIZATION_ID,page:String(task.page),per_page:"200"});
       if (!Array.isArray(snapshot[task.response_key])) throw new Error("Zoho list response is missing its records");
