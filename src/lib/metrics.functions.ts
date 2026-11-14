@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { FINCOMMAND_ENTITY } from "@/lib/fincommand/catalogue";
 import type { MetricDefinition, MetricResult, ValidationIssue } from "@/lib/metrics/types";
 
 export type MetricCatalogue = {
@@ -26,7 +27,7 @@ export const getMetricCatalogue = createServerFn({ method: "GET" }).handler(
     if (entities.error) throw new Error(entities.error.message);
     return {
       metrics: (metrics.data ?? []) as unknown as MetricDefinition[],
-      entities: (entities.data ?? []) as unknown as MetricCatalogue["entities"],
+      entities: [...(entities.data ?? []) as unknown as MetricCatalogue["entities"], FINCOMMAND_ENTITY],
     };
   },
 );
