@@ -166,13 +166,16 @@ export function resolvePeriod(params: PeriodParams = {}): ResolvedPeriod {
     }
     const qi = ['Q1','Q2','Q3','Q4'].indexOf(period);
     if (qi < 0) throw new Error(`Invalid quarter: ${period}`);
+    const indices = qIdx[qi];
+    const lastIndex = indices?.[2];
+    if (!indices || lastIndex === undefined) throw new Error(`Invalid quarter: ${period}`);
     return {
-      plIndices: qIdx[qi],
-      bsLastIdx: qIdx[qi][2],
-      colLabels: qIdx[qi].map(i => months[i]),
-      colIndices: qIdx[qi].map(i => [i]),
+      plIndices: indices,
+      bsLastIdx: lastIndex,
+      colLabels: indices.map(i => months[i] ?? ''),
+      colIndices: indices.map(i => [i]),
       label: `${period} (${qLbls[qi]})`,
-      periodEnd: qEnds[qi],
+      periodEnd: qEnds[qi] ?? '',
       isSingleCol: true,
       quarterIdx: qi,
     };
@@ -193,13 +196,16 @@ export function resolvePeriod(params: PeriodParams = {}): ResolvedPeriod {
       };
     }
     const hi = period === 'H1' ? 0 : 1;
+    const indices = hIdx[hi];
+    const lastIndex = indices?.at(-1);
+    if (!indices || lastIndex === undefined) throw new Error(`Invalid half-year: ${period}`);
     return {
-      plIndices: hIdx[hi],
-      bsLastIdx: hIdx[hi][hIdx[hi].length - 1],
-      colLabels: hIdx[hi].map(i => months[i]),
-      colIndices: hIdx[hi].map(i => [i]),
+      plIndices: indices,
+      bsLastIdx: lastIndex,
+      colLabels: indices.map(i => months[i] ?? ''),
+      colIndices: indices.map(i => [i]),
       label: `${period} (${hLbls[hi]})`,
-      periodEnd: hEnds[hi],
+      periodEnd: hEnds[hi] ?? '',
       isSingleCol: true,
       halfIdx: hi,
     };
@@ -258,7 +264,7 @@ function aggregateByNote(ledgers: TbLedgerRow[], bsLastIdx: number, plIndices: n
 
     if (!isBSSection) {
       for (let mi = 0; mi < 12; mi++) {
-        notes[key].monthly[mi] += monthNet(row, mi);
+        notes[key].monthly[mi] = (notes[key].monthly[mi] ?? 0) + monthNet(row, mi);
       }
     }
   });
@@ -400,11 +406,11 @@ export function computeBS(ledgers: TbLedgerRow[], periodParams: PeriodParams): B
   Object.entries(notes).forEach(([key, note]) => {
     // Only pick BS-prefixed groups for the balance sheet
     if (!key.startsWith('bs_')) return;
-    if (note.section && sections[note.section]) sections[note.section].push(note);
+    if (note.section) sections[note.section]?.push(note);
   });
 
   const sectionTotal = (sec: string) =>
-    sections[sec].reduce((s, note) => s + note.total, 0);
+    (sections[sec] ?? []).reduce((s, note) => s + note.total, 0);
 
   const totalEquity = sectionTotal('eq');
   const totalNCL = sectionTotal('lnc');
@@ -414,21 +420,21 @@ export function computeBS(ledgers: TbLedgerRow[], periodParams: PeriodParams): B
   const totalEL = totalEquity + totalNCL + totalCL;
   const totalAssets = totalNCA + totalCA;
 
-  Object.keys(sections).forEach(sec => sections[sec].sort((a, b) => a.note_no - b.note_no));
+  Object.keys(sections).forEach(sec => sections[sec]?.sort((a, b) => a.note_no - b.note_no));
 
   return {
     equity_liabilities: {
-      equity: sections['eq'],
-      non_current_liab: sections['lnc'],
-      current_liab: sections['lc'],
+      equity: sections['eq'] ?? [],
+      non_current_liab: sections['lnc'] ?? [],
+      current_liab: sections['lc'] ?? [],
       total_equity: totalEquity,
       total_ncl: totalNCL,
       total_cl: totalCL,
       total: totalEL,
     },
     assets: {
-      non_current: sections['anc'],
-      current: sections['ac'],
+      non_current: sections['anc'] ?? [],
+      current: sections['ac'] ?? [],
       total_nca: totalNCA,
       total_ca: totalCA,
       total: totalAssets,
@@ -545,7 +551,7 @@ export function computeNotes(ledgers: TbLedgerRow[], periodParams: PeriodParams)
   Object.entries(raw).forEach(([, note]) => {
     clean[note.note_no] = clean[note.note_no] || { ...note, ledgers: [...note.ledgers] };
     // If both bs_ and pl_ for same note_no exist, keep both sections separate
-    if (clean[note.note_no].section !== note.section) {
+    if (clean[note.note_no]?.section !== note.section) {
       const altKey = `${note.note_no}_${note.section}`;
       clean[altKey] = note;
     } else {
@@ -571,7 +577,7 @@ export function computeTreasury(ledgers: TbLedgerRow[], periodParams: PeriodPara
     .filter((r): r is TbLedgerRow & { treasury_type: TreasuryType } => !!r.treasury_type && r.treasury_type in types)
     .forEach(r => {
       types[r.treasury_type].push({
-        code: r.ledger_code,
+        code: r.ledger_code ?? null,
         name: r.ledger_name,
         closing: closingBalance(r, bsLastIdx),
       });
@@ -679,7 +685,7 @@ const sumValues = (rec: Record<string, number>) => Object.values(rec).reduce((s,
 export function computeCashFlow(ledgers: TbLedgerRow[], periodParams: PeriodParams): CashFlowResult {
   const pl = computePL(ledgers, periodParams);
   const { plIndices, bsLastIdx } = resolvePeriod(periodParams);
-  const startIdx = plIndices[0] - 1; // month index just before the period began (-1 = opening balance)
+  const startIdx = (plIndices[0] ?? 0) - 1; // month index just before the period began (-1 = opening balance)
 
   const depAmt = pl.depreciation;
   const finAmt = pl.finance_costs;
@@ -866,11 +872,11 @@ export function computeRatios(ledgers: TbLedgerRow[], periodParams: PeriodParams
   // period, so that case honestly counts 0 principal rather than guessing.
   const cfFinancing = cf.financing as Record<string, number>;
   const principalRepaid = Math.max(0, -(
-    (cfFinancing.short_term_borrowings_movement || 0) +
-    (cfFinancing.long_term_borrowings_and_leases_movement || 0)
+    (cfFinancing['short_term_borrowings_movement'] || 0) +
+    (cfFinancing['long_term_borrowings_and_leases_movement'] || 0)
   ));
   const debtService = pl.finance_costs + principalRepaid;
-  const dscr = debtService > 0 ? parseFloat(((cf.operating.total as number) / debtService).toFixed(2)) : null;
+  const dscr = debtService > 0 ? parseFloat(((cf.operating['total'] as number) / debtService).toFixed(2)) : null;
 
   return {
     liquidity: {

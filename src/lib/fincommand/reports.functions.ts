@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { reportJson } from "./json";
 
 const reportInput = z.object({
   companyId: z.string().uuid(),
@@ -46,12 +47,12 @@ export const getFincommandReports = createServerFn({ method: "POST" })
     if (!rows.length) throw new Error("The current trial balance contains no ledgers.");
     const engine = await import("./tb-engine");
     const params = { periodType: data.periodType, period: data.period, yearType: year.year_type === "CY" ? "CY" as const : "FY" as const };
-    return {
+    return reportJson({
       financialYear: year, upload,
       mis: engine.computeMIS(rows, params), bs: engine.computeBS(rows, params),
       pl: engine.computePL(rows, params), notes: engine.computeNotes(rows, params),
       treasury: engine.computeTreasury(rows, params), cashflow: engine.computeCashFlow(rows, params),
       ratios: engine.computeRatios(rows, params),
       assumptions: ["P&L current and deferred tax retain the source backend's modeled 25% and 1% estimates, not actual tax assessments.", "Cash tax paid, OCI, and EPS are unavailable from trial-balance data alone."],
-    };
+    });
   });
