@@ -98,6 +98,61 @@ metric builder UI, dashboard data API, widget renderers, dashboard
 
 builder, templates and sharing, polish.
 
+## Run it locally in VS Code
+
+**Prerequisites**
+
+- Node.js 20 or newer (this project was built on Node 22)
+- [Bun](https://bun.sh) 1.2 or newer — `curl -fsSL https://bun.sh/install | bash`
+- VS Code with the ESLint and Prettier extensions (config is already in the repo)
+
+**Install and start**
+
+```sh
+unzip dashboard-builder-source.zip -d insight-builder
+cd insight-builder
+bun install
+bun run dev
+```
+
+Open the printed URL (usually http://localhost:8080). The dev server hot-reloads on save.
+
+**Other commands**
+
+```sh
+bun run build     # production build
+bun run preview   # serve the production build
+bun run lint      # ESLint
+bun run format    # Prettier
+bun test          # unit tests (metric engine, normalisation, FP&A)
+```
+
+**Environment**
+
+`.env` already carries the backend address and the publishable key, so the app
+connects to the live backend out of the box. Those are public values, safe to
+commit.
+
+Server-only secrets are **not** in this archive. To use the Zoho import route
+locally, add them to a `.env` file (never commit it):
+
+```
+LOVABLE_CRON_SECRET=<scheduler token>
+ZOHO_CLIENT_ID=<your Zoho app client id>
+ZOHO_CLIENT_SECRET=<your Zoho app client secret>
+```
+
+**Database**
+
+Schema history lives in `supabase/migrations/` — apply them in filename order to
+a fresh Postgres/Supabase database to rebuild the full schema and seed data.
+
+**Editing in VS Code**
+
+Open the unzipped folder as the workspace root (`File → Open Folder`). Path
+alias `@/` maps to `src/` and works out of the box; type-checking, formatting on
+save and linting all read the committed configs.
+
 This project was built with [Lovable](https://lovable.dev).
 
 **Live app**: https://insight-craft-243.lovable.app
